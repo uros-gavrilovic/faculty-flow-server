@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  faculty-flow-user:
+    build:
+      context: ../faculty-flow-user
+    image: faculty-flow-user:latest
+    container_name: faculty-flow-user
+    ports:
+      - "8081:8080"
