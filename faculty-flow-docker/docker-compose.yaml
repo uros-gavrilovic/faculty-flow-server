@@ -1,5 +1,22 @@
 version: "3.9"
 services:
+  postgres:
+    image: postgres:16
+    container_name: faculty-flow-postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./resources/database:/docker-entrypoint-initdb.d
+    ports:
+      - "8080:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   faculty-flow-user:
     build:
       context: ../faculty-flow-user
@@ -7,3 +24,6 @@ services:
     container_name: faculty-flow-user
     ports:
       - "8081:8080"
+
+volumes:
+  pg_data:
