@@ -31,6 +31,7 @@
   <modules>
     <module>faculty-flow-core</module>
     <module>faculty-flow-user</module>
+    <module>faculty-flow-room</module>
   </modules>
 
   <dependencyManagement>
