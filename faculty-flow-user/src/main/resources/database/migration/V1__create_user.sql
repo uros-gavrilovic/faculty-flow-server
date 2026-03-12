@@ -19,9 +19,11 @@ ALTER TABLE user_account
 ALTER TABLE user_account
     ADD CONSTRAINT email_pattern CHECK (email IS NULL OR email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$');
 
+CREATE TYPE user_role AS ENUM ('USER', 'ADMINISTRATOR');
+
 CREATE TABLE "user_roles" (
     user_id BIGINT NOT NULL REFERENCES user_account(id) ON DELETE CASCADE,
-    role VARCHAR(64) NOT NULL,
+    role user_role NOT NULL,
 
     PRIMARY KEY (user_id, role)
 );

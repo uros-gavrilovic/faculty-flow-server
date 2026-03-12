@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 @Component
-public class MockInit {
+public class MockUserLoader {
 
 	@Value("${dataloader.init-test-data:false}")
 	private boolean initTestData;
@@ -23,14 +23,15 @@ public class MockInit {
 	@Autowired
 	private UserRepository userRepository;
 
-	private static final Logger log = LoggerFactory.getLogger(MockInit.class);
+	private static final Logger log = LoggerFactory.getLogger(MockUserLoader.class);
 
 	@PostConstruct
 	void loadTestData() {
 		if (initTestData) {
 			log.warn("Loading test data ...");
 
-			if (userRepository.count() == 0) loadUsers(10);
+			// User 'admin' is automatically created by Flyway
+			if (userRepository.count() <= 1) loadUsers(10);
 		}
 	}
 
