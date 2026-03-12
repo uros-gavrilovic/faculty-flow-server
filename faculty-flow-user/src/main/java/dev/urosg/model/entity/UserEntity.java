@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
 
 @Data
 @Entity
@@ -18,9 +19,11 @@ public class UserEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
 	private Long id;
 
-	@Column(unique = true)
+	@ColumnDefault("gen_random_uuid()")
+	@Column(name = "uuid")
 	private UUID uuid;
 
 	@NotNull
@@ -46,8 +49,8 @@ public class UserEntity {
 
 	@ElementCollection(targetClass = UserRole.class, fetch = FetchType.EAGER)
 	@CollectionTable(
-			name = "user_roles",
-			joinColumns = @JoinColumn(name = "user_id")
+		name = "user_roles",
+		joinColumns = @JoinColumn(name = "user_id")
 	)
 	@Enumerated(EnumType.STRING)
 	@Column(name = "role", nullable = false)

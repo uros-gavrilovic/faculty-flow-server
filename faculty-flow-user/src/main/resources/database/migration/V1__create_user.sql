@@ -1,6 +1,6 @@
 CREATE TABLE user_account (
     id BIGSERIAL PRIMARY KEY,
-    uuid UUID UNIQUE,
+    uuid UUID UNIQUE DEFAULT gen_random_uuid(),
 
     username VARCHAR(64) NOT NULL UNIQUE,
     password CHAR(60) NOT NULL,
