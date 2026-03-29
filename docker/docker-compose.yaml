@@ -22,9 +22,9 @@ services:
       context: ../faculty-flow-gateway
     image: faculty-flow-gateway:latest
     container_name: faculty-flow-gateway
-    depends_on:
-      - faculty-flow-user
-      - faculty-flow-room
+#    depends_on:
+#      - faculty-flow-user
+#      - faculty-flow-room
     ports:
       - "9000:8080"
 
@@ -33,18 +33,18 @@ services:
       context: ../faculty-flow-user
     image: faculty-flow-user:latest
     container_name: faculty-flow-user
-    depends_on:
-      postgres:
-        condition: service_healthy
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
 
   faculty-flow-room:
     build:
       context: ../faculty-flow-room
     image: faculty-flow-room:latest
     container_name: faculty-flow-room
-    depends_on:
-      postgres:
-        condition: service_healthy
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
 
 volumes:
   pg_data:
