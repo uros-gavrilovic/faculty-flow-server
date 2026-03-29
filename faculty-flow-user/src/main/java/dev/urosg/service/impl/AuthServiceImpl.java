@@ -1,5 +1,6 @@
 package dev.urosg.service.impl;
 
+import dev.urosg.model.dto.JwtToken;
 import dev.urosg.model.dto.LoginRequest;
 import dev.urosg.model.dto.LoginResponse;
 import dev.urosg.model.entity.UserEntity;
@@ -40,6 +41,11 @@ public class AuthServiceImpl implements AuthService {
 		if (!passwordsMatch) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
 
 		log.info("User '{}' logged in successfully", request.username());
-		return new LoginResponse(jwtService.generateToken(request.username()));
+		JwtToken jwtToken = jwtService.generateToken(request.username());
+
+		return new LoginResponse(
+			jwtToken.token(),
+			jwtToken.expiration()
+		);
 	}
 }

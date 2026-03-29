@@ -2,7 +2,7 @@ package dev.urosg.model.dto;
 
 import java.util.Date;
 
-public record LoginResponse(
+public record JwtToken(
 	String token,
 	Date expiration
 ) {}

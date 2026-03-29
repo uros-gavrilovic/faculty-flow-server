@@ -1,5 +1,6 @@
 package dev.urosg.service.impl;
 
+import dev.urosg.model.dto.JwtToken;
 import dev.urosg.service.JwtService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -25,7 +26,7 @@ public class JwtServiceImpl implements JwtService {
 	private String secret;
 
 	@Value("${jwt.expiration}")
-	private long expiration;
+	private long expirationPeriod;
 
 	@Override
 	public boolean isValidToken(String token) {
@@ -35,13 +36,16 @@ public class JwtServiceImpl implements JwtService {
 	}
 
 	@Override
-	public String generateToken(String username) {
-		return Jwts.builder()
+	public JwtToken generateToken(String username) {
+		Date expiration = new Date(System.currentTimeMillis() + expirationPeriod);
+		String token = Jwts.builder()
 			.subject(username)
 			.issuedAt(new Date())
-			.expiration(new Date(System.currentTimeMillis() + expiration))
+			.expiration(expiration)
 			.signWith(getSigningKey())
 			.compact();
+
+		return new JwtToken(token, expiration);
 	}
 
 	private boolean getIsValidToken(String token) {
