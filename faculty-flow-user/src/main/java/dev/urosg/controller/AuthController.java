@@ -2,6 +2,8 @@ package dev.urosg.controller;
 
 import dev.urosg.model.dto.LoginRequest;
 import dev.urosg.model.dto.LoginResponse;
+import dev.urosg.model.dto.RegisterAccountRequest;
+import dev.urosg.model.dto.User;
 import dev.urosg.service.AuthService;
 import dev.urosg.service.JwtService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,5 +42,10 @@ public class AuthController {
 	@PostMapping("/login")
 	public LoginResponse login(@RequestBody LoginRequest request) {
 		return authService.login(request);
+	}
+
+	@PostMapping("/register")
+	public User register(@RequestBody RegisterAccountRequest request) {
+		return authService.register(request);
 	}
 }

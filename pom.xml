@@ -34,6 +34,7 @@
     <module>faculty-flow-user</module>
     <module>faculty-flow-room</module>
     <module>faculty-flow-gateway</module>
+    <module>faculty-flow-mail</module>
   </modules>
 
   <dependencyManagement>

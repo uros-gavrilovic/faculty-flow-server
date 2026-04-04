@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body style="margin:0;padding:0;background:#f4f6f8;font-family:Arial,sans-serif;">
+
+<div style="max-width:520px;margin:40px auto;background:#ffffff;
+              border-radius:12px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,0.06);">
+
+    <!-- Header -->
+    <div style="background:#A6CBF7;padding:22px 24px;">
+        <h1 style="margin:0;font-size:18px;color:#0f172a;">
+            Verify your account
+        </h1>
+    </div>
+
+    <!-- Body -->
+    <div style="padding:28px 24px;">
+
+        <p style="margin:0 0 14px 0;font-size:14px;color:#333;">
+            Hi <span th:text="${username}">User</span>,
+        </p>
+
+        <p style="margin:0 0 22px 0;font-size:14px;color:#555;line-height:1.5;">
+            Thanks for signing up. Please confirm your email address to activate your account.
+        </p>
+
+        <div style="text-align:center;margin:28px 0;">
+            <a th:href="${verificationUrl}"
+               style="background:#A6CBF7;color:#0f172a;
+                  padding:12px 22px;border-radius:8px;
+                  text-decoration:none;font-size:14px;font-weight:600;">
+                Verify Email
+            </a>
+        </div>
+
+        <p style="font-size:12px;color:#888;line-height:1.4;">
+            If you didn’t create this account, you can safely ignore this email.
+        </p>
+
+    </div>
+
+    <!-- Footer -->
+    <div style="padding:16px 24px;background:#f9fafb;text-align:center;">
+      <span style="font-size:11px;color:#aaa;">
+        Faculty Flow
+      </span>
+    </div>
+
+</div>
+
+</body>
+</html>

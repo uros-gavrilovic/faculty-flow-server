@@ -1,19 +1,23 @@
 package dev.urosg.service.impl;
 
-import dev.urosg.model.dto.JwtToken;
-import dev.urosg.model.dto.LoginRequest;
-import dev.urosg.model.dto.LoginResponse;
+import dev.urosg.adapter.UserAdapter;
+import dev.urosg.model.dto.*;
 import dev.urosg.model.entity.UserEntity;
 import dev.urosg.repository.UserRepository;
 import dev.urosg.service.AuthService;
 import dev.urosg.service.JwtService;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import java.util.Optional;
+import java.util.UUID;
 
+@Transactional
 @Service
 public class AuthServiceImpl implements AuthService {
 
@@ -26,6 +30,7 @@ public class AuthServiceImpl implements AuthService {
 	public AuthServiceImpl(
 		UserRepository userRepository,
 		JwtService jwtService,
+		EntityManager entityManager,
 		PasswordEncoder passwordEncoder
 	) {
 		this.userRepository = userRepository;
@@ -47,5 +52,22 @@ public class AuthServiceImpl implements AuthService {
 			jwtToken.token(),
 			jwtToken.expiration()
 		);
+	}
+
+	@Override
+	public User register(RegisterAccountRequest request) {
+		Optional<UserEntity> existingUserOpt = userRepository.findByUsername(request.username());
+		if (existingUserOpt.isPresent()) throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists");
+
+		UserEntity userEntity = UserAdapter.from(request);
+		userEntity.setUuid(UUID.randomUUID());
+		userEntity.setPassword(passwordEncoder.encode(request.password()));
+
+		UserEntity savedUserEntity = userRepository.saveAndFlush(userEntity);
+		log.info("User '{}' successfully created", savedUserEntity.getUsername());
+
+		// TODO: Registration e-mail logic.
+
+		return UserAdapter.toDto(savedUserEntity);
 	}
 }

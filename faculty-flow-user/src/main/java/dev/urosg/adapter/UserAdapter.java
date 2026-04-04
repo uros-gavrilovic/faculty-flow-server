@@ -1,5 +1,6 @@
 package dev.urosg.adapter;
 
+import dev.urosg.model.dto.RegisterAccountRequest;
 import dev.urosg.model.dto.User;
 import dev.urosg.model.entity.UserEntity;
 
@@ -12,5 +13,17 @@ public class UserAdapter {
 			entity.getEmail(),
 			entity.getUsername()
 		);
+	}
+
+	public static UserEntity from(RegisterAccountRequest request) {
+		UserEntity user = new UserEntity();
+
+		user.setUsername(request.username());
+		user.setPassword(request.password());
+		user.setEmail(request.email());
+		user.setFirstName(request.firstName());
+		user.setLastName(request.lastName());
+
+		return user;
 	}
 }

@@ -3,3 +3,6 @@ CREATE DATABASE ff_user OWNER ff_user;
 
 CREATE USER ff_room WITH PASSWORD 'ff_room';
 CREATE DATABASE ff_room OWNER ff_room;
+
+GRANT ALL PRIVILEGES ON DATABASE ff_user TO admin;
+GRANT ALL PRIVILEGES ON DATABASE ff_room TO admin;

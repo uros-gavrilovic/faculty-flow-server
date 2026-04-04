@@ -46,5 +46,11 @@ services:
 #      postgres:
 #        condition: service_healthy
 
+  faculty-flow-mail:
+    build:
+      context: ../faculty-flow-mail
+    image: faculty-flow-mail:latest
+    container_name: faculty-flow-mail
+
 volumes:
   pg_data:
