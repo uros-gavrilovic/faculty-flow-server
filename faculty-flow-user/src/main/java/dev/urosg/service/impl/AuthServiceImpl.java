@@ -1,6 +1,7 @@
 package dev.urosg.service.impl;
 
 import dev.urosg.adapter.UserAdapter;
+import dev.urosg.kafka.producer.UserEventProducer;
 import dev.urosg.model.dto.*;
 import dev.urosg.model.entity.UserEntity;
 import dev.urosg.repository.UserRepository;
@@ -24,16 +25,18 @@ public class AuthServiceImpl implements AuthService {
 	private static final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
 
 	private final UserRepository userRepository;
+	private final UserEventProducer userEventProducer;
 	private final JwtService jwtService;
 	private final PasswordEncoder passwordEncoder;
 
 	public AuthServiceImpl(
 		UserRepository userRepository,
+		UserEventProducer userEventProducer,
 		JwtService jwtService,
-		EntityManager entityManager,
 		PasswordEncoder passwordEncoder
 	) {
 		this.userRepository = userRepository;
+		this.userEventProducer = userEventProducer;
 		this.jwtService = jwtService;
 		this.passwordEncoder = passwordEncoder;
 	}
@@ -66,7 +69,11 @@ public class AuthServiceImpl implements AuthService {
 		UserEntity savedUserEntity = userRepository.saveAndFlush(userEntity);
 		log.info("User '{}' successfully created", savedUserEntity.getUsername());
 
-		// TODO: Registration e-mail logic.
+		userEventProducer.sendVerificationEvent(
+			savedUserEntity.getEmail(),
+			savedUserEntity.getUsername(),
+			"http://localhost:9000/verify?token=" + savedUserEntity.getUuid()
+		);
 
 		return UserAdapter.toDto(savedUserEntity);
 	}

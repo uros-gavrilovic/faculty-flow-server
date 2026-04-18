@@ -2,6 +2,7 @@ package dev.urosg.service.impl;
 
 import dev.urosg.model.PlaceholderConstant;
 import jakarta.mail.internet.MimeMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import dev.urosg.service.MailService;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+@Slf4j
 @Service
 public class MailServiceImpl implements MailService {
 
@@ -30,7 +32,7 @@ public class MailServiceImpl implements MailService {
 			context.setVariable(PlaceholderConstant.USER_NAME, username);
 			context.setVariable(PlaceholderConstant.VERIFICATION_URL, verificationUrl);
 
-			String html = templateEngine.process("mail/new-account", context);
+			String html = templateEngine.process("account/verify-account", context);
 
 			MimeMessage message = mailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -40,7 +42,7 @@ public class MailServiceImpl implements MailService {
 			helper.setText(html, true);
 
 			mailSender.send(message);
-
+			log.info("New account '{}' verification e-mail sent to '{}'", username, to);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

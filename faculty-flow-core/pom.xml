@@ -48,6 +48,14 @@
       <scope>compile</scope>
     </dependency>
 
+    <!-- OPTIONAL DEPENDENCIES -->
+    <dependency>
+      <groupId>org.springframework.kafka</groupId>
+      <artifactId>spring-kafka</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <!-- TEST DEPENDENCIES -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
