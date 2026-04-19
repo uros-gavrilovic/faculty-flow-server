@@ -11,6 +11,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,9 @@ public class AuthServiceImpl implements AuthService {
 	private final UserEventProducer userEventProducer;
 	private final JwtService jwtService;
 	private final PasswordEncoder passwordEncoder;
+
+	@Value("${app.public-base-url}")
+	private String baseUrl;
 
 	public AuthServiceImpl(
 		UserRepository userRepository,
@@ -47,6 +51,9 @@ public class AuthServiceImpl implements AuthService {
 
 		boolean passwordsMatch = passwordEncoder.matches(request.password(), user.getPassword());
 		if (!passwordsMatch) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
+
+		boolean isVerified = user.getIsVerified();
+		if (!isVerified) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Account not verified");
 
 		log.info("User '{}' logged in successfully", request.username());
 		JwtToken jwtToken = jwtService.generateToken(request.username());
@@ -72,9 +79,25 @@ public class AuthServiceImpl implements AuthService {
 		userEventProducer.sendVerificationEvent(
 			savedUserEntity.getEmail(),
 			savedUserEntity.getUsername(),
-			"http://localhost:9000/verify?token=" + savedUserEntity.getUuid()
+			baseUrl + "/api/user/verify-account?token=" + savedUserEntity.getUuid()
 		);
 
 		return UserAdapter.toDto(savedUserEntity);
+	}
+
+	@Override
+	public User verifyAccount(UUID uuid) {
+		Optional<UserEntity> existingUserOpt = userRepository.findByUuid(uuid);
+		if (existingUserOpt.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+
+		UserEntity userEntity = existingUserOpt.get();
+		if (userEntity.getIsVerified()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account already verified");
+
+		userEntity.setIsVerified(true);
+		userRepository.saveAndFlush(userEntity);
+
+		log.info("User '{}' successfully verified their account", userEntity.getUsername());
+
+		return UserAdapter.toDto(userEntity);
 	}
 }

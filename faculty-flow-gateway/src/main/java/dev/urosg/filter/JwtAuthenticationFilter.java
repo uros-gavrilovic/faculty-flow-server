@@ -21,7 +21,11 @@ public class JwtAuthenticationFilter implements WebFilter {
 
 	private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
-	private static final List<String> PUBLIC_PATHS = List.of("/api/user/login", "/api/user/register");
+	private static final List<String> PUBLIC_PATHS = List.of(
+		"/api/user/login",
+		"/api/user/register",
+		"/api/user/verify-account"
+	);
 
 	private final AuthForwardService authForwardService;
 	private final ReactiveWriter reactiveWriter;

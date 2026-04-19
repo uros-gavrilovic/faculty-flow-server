@@ -1,6 +1,6 @@
 package dev.urosg;
 
-import config.KafkaConsumerConfig;
+import dev.urosg.config.KafkaConsumerConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;

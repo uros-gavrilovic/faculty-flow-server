@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/user")
@@ -47,5 +49,10 @@ public class AuthController {
 	@PostMapping("/register")
 	public User register(@RequestBody RegisterAccountRequest request) {
 		return authService.register(request);
+	}
+
+	@GetMapping("/verify-account")
+	public User verifyAccount(@RequestParam("token") UUID uuid) {
+		return authService.verifyAccount(uuid);
 	}
 }

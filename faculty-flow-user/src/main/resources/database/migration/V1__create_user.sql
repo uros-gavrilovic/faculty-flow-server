@@ -5,6 +5,7 @@ CREATE TABLE user_account (
     username VARCHAR(64) NOT NULL UNIQUE,
     password CHAR(60) NOT NULL,
     email VARCHAR(255) UNIQUE,
+    is_verified BOOLEAN NOT NULL DEFAULT FALSE,
 
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL
