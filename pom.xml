@@ -31,9 +31,10 @@
 
   <modules>
     <module>faculty-flow-core</module>
+    <module>faculty-flow-gateway</module>
     <module>faculty-flow-user</module>
     <module>faculty-flow-room</module>
-    <module>faculty-flow-gateway</module>
+    <module>faculty-flow-reservation</module>
     <module>faculty-flow-mail</module>
   </modules>
 

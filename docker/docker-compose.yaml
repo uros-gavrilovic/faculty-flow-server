@@ -54,6 +54,15 @@ services:
 #      postgres:
 #        condition: service_healthy
 
+  faculty-flow-reservation:
+    build:
+      context: ../faculty-flow-reservation
+    image: faculty-flow-reservation:latest
+    container_name: faculty-flow-reservation
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+
   faculty-flow-room:
     build:
       context: ../faculty-flow-room
