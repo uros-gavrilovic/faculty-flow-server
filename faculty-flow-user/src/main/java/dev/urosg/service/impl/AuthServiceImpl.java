@@ -53,7 +53,7 @@ public class AuthServiceImpl implements AuthService {
 		if (!passwordsMatch) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
 
 		boolean isVerified = user.getIsVerified();
-		if (!isVerified) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Account not verified");
+		if (!isVerified) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account not verified");
 
 		log.info("User '{}' logged in successfully", request.username());
 		JwtToken jwtToken = jwtService.generateToken(request.username());
@@ -79,7 +79,7 @@ public class AuthServiceImpl implements AuthService {
 		userEventProducer.sendVerificationEvent(
 			savedUserEntity.getEmail(),
 			savedUserEntity.getUsername(),
-			baseUrl + "/api/user/verify-account?token=" + savedUserEntity.getUuid()
+			baseUrl + "/api/auth/verify-account?token=" + savedUserEntity.getUuid()
 		);
 
 		return UserAdapter.toDto(savedUserEntity);

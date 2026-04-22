@@ -25,7 +25,7 @@ public class AuthForwardServiceImpl implements AuthForwardService {
 
 	public Mono<LoginResponse> login(LoginRequest request) {
 		return webClient.post()
-			.uri(USER_URL + "/api/user/login")
+			.uri(USER_URL + "/api/auth/login")
 			.contentType(MediaType.APPLICATION_JSON)
 			.bodyValue(request)
 			.retrieve()
@@ -37,7 +37,7 @@ public class AuthForwardServiceImpl implements AuthForwardService {
 
 	public Mono<Boolean> isTokenValid(String token) {
 		return webClient.post()
-			.uri(USER_URL + "/api/user/validate")
+			.uri(USER_URL + "/api/auth/validate")
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.retrieve()
 			.toBodilessEntity()

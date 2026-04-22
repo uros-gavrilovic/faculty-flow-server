@@ -11,6 +11,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Data
 @Entity
@@ -54,6 +56,7 @@ public class UserEntity {
 	)
 	@Enumerated(EnumType.STRING)
 	@Column(name = "role", nullable = false)
+	@JdbcTypeCode(SqlTypes.NAMED_ENUM) // Use user-defined enum type
 	private Set<UserRole> roles;
 
 	private Boolean isVerified = false;

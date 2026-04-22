@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/auth")
 public class AuthController {
 
 	private final AuthService authService;
@@ -34,9 +34,7 @@ public class AuthController {
 	public ResponseEntity<Void> validate(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
 
 		boolean isValidBearerToken = jwtService.isValidToken(authHeader);
-		if (!isValidBearerToken) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-		}
+		if (!isValidBearerToken) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
 		return ResponseEntity.ok().build();
 	}

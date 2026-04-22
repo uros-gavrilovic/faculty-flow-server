@@ -11,7 +11,8 @@ public class UserAdapter {
 			entity.getFirstName(),
 			entity.getLastName(),
 			entity.getEmail(),
-			entity.getUsername()
+			entity.getUsername(),
+			entity.getRoles()
 		);
 	}
 
