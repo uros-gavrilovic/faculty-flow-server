@@ -46,17 +46,17 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	public LoginResponse login(LoginRequest request) {
-		UserEntity user = userRepository.findByUsername(request.username())
+		UserEntity userEntity = userRepository.findByUsername(request.username())
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
 
-		boolean passwordsMatch = passwordEncoder.matches(request.password(), user.getPassword());
+		boolean passwordsMatch = passwordEncoder.matches(request.password(), userEntity.getPassword());
 		if (!passwordsMatch) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
 
-		boolean isVerified = user.getIsVerified();
+		boolean isVerified = userEntity.getIsVerified();
 		if (!isVerified) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account not verified");
 
 		log.info("User '{}' logged in successfully", request.username());
-		JwtToken jwtToken = jwtService.generateToken(request.username());
+		JwtToken jwtToken = jwtService.generateToken(request.username(), userEntity.getRoles());
 
 		return new LoginResponse(
 			jwtToken.token(),

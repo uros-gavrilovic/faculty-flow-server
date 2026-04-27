@@ -4,6 +4,7 @@ CREATE TABLE reservation (
     id BIGSERIAL PRIMARY KEY,
     uuid UUID UNIQUE DEFAULT gen_random_uuid(),
 
+    name VARCHAR(255) NOT NULL,
     room VARCHAR(255) NOT NULL,
     start_time TIMESTAMP NOT NULL,
     end_time TIMESTAMP NOT NULL,

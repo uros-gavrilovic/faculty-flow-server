@@ -1,6 +1,8 @@
 package dev.urosg.service.impl;
 
+import dev.urosg.model.constant.JwtClaim;
 import dev.urosg.model.dto.JwtToken;
+import dev.urosg.model.enumeration.UserRole;
 import dev.urosg.service.JwtService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.Set;
 
 @Service
 public class JwtServiceImpl implements JwtService {
@@ -36,10 +39,11 @@ public class JwtServiceImpl implements JwtService {
 	}
 
 	@Override
-	public JwtToken generateToken(String username) {
+	public JwtToken generateToken(String username, Set<UserRole> userRoles) {
 		Date expiration = new Date(System.currentTimeMillis() + expirationPeriod);
 		String token = Jwts.builder()
 			.subject(username)
+			.claim(JwtClaim.ROLES.name(), userRoles)
 			.issuedAt(new Date())
 			.expiration(expiration)
 			.signWith(getSigningKey())

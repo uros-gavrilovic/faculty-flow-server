@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record Reservation(
-	UUID nuuid,
+	UUID uuid,
 	String name,
 	String room,
 	LocalDateTime startTime,
@@ -15,7 +15,7 @@ public record Reservation(
 	String note
 ) {
 	Reservation(
-		UUID nuuid,
+		UUID uuid,
 		String name,
 		String room,
 		LocalDateTime startTime,
@@ -23,6 +23,6 @@ public record Reservation(
 		String reservedBy,
 		ReservationStatus status
 	) {
-		this(nuuid, name, room, startTime, endTime, reservedBy, status, null);
+		this(uuid, name, room, startTime, endTime, reservedBy, status, null);
 	}
 }
