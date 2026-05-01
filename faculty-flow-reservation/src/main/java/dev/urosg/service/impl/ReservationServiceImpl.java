@@ -103,7 +103,7 @@ public class ReservationServiceImpl implements ReservationService {
 		);
 
 		reservationEntity.setStatus(review.status());
-//		reservationEntity.setReviewedBy(review.reviewedBy()); // TODO
+//		reservationEntity.setReviewedBy(review.reviewedBy()); // TODO: Add authentication util
 
 		ReservationEntity updatedEntity = this.reservationRepository.saveAndFlush(reservationEntity);
 		log.info(
