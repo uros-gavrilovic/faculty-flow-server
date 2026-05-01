@@ -11,18 +11,8 @@ public record Reservation(
 	LocalDateTime startTime,
 	LocalDateTime endTime,
 	String reservedBy,
+	String reviewedBy,
 	ReservationStatus status,
 	String note
 ) {
-	Reservation(
-		UUID uuid,
-		String name,
-		String room,
-		LocalDateTime startTime,
-		LocalDateTime endTime,
-		String reservedBy,
-		ReservationStatus status
-	) {
-		this(uuid, name, room, startTime, endTime, reservedBy, status, null);
-	}
 }

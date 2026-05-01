@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class MailKafkaListener {
+public class UserKafkaListener {
 
 	private final MailService mailService;
 

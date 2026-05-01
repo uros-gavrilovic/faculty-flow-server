@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body style="margin:0;padding:0;background:#f4f6f8;font-family:Arial,sans-serif;">
+
+<div style="max-width:520px;margin:40px auto;background:#ffffff;
+              border-radius:12px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,0.06);">
+
+    <!-- Header -->
+    <div style="background:#A6CBF7;padding:22px 24px;">
+        <h1 style="margin:0;font-size:18px;color:#0f172a;">
+            Room Reservation Reviewed
+        </h1>
+    </div>
+
+    <!-- Body -->
+    <div style="padding:28px 24px;">
+
+        <p style="margin:0 0 14px 0;font-size:14px;color:#333;">
+            Hello,
+        </p>
+
+        <p style="margin:0 0 18px 0;font-size:14px;color:#555;line-height:1.5;">
+            Your room reservation has been reviewed.
+        </p>
+
+        <div style="font-size:14px;color:#333;line-height:1.6;">
+            <p><b>Room:</b> <span th:text="${room}">Room A</span></p>
+            <p><b>Start:</b> <span th:text="${startTime}">2026-01-01 10:00</span></p>
+            <p><b>End:</b> <span th:text="${endTime}">2026-01-01 12:00</span></p>
+            <p><b>Reviewed by:</b> <span th:text="${reviewedBy}">John Doe</span></p>
+            <p style="margin:10px 0 0 0;"><b>Note:</b></p>
+            <div style="margin-top:6px;background:#f1f5f9;border:1px solid #e2e8f0;padding:10px 12px;border-radius:8px;color:#334155;white-space:pre-wrap;"
+                 th:text="${note}">/</div>
+        </div>
+
+        <div style="margin-top:22px;padding:12px;border-radius:8px;background:#f1f5f9;">
+            <p style="margin:0;font-size:13px;color:#0f172a;">
+                Status: <b th:text="${status}">/</b>
+            </p>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div style="padding:16px 24px;background:#f9fafb;text-align:center;">
+        <span style="font-size:11px;color:#aaa;">
+            Faculty Flow
+        </span>
+    </div>
+
+</div>
+
+</body>
+</html>

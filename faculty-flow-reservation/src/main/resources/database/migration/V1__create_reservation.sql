@@ -9,6 +9,7 @@ CREATE TABLE reservation (
     start_time TIMESTAMP NOT NULL,
     end_time TIMESTAMP NOT NULL,
     reserved_by VARCHAR(255) NOT NULL,
+    reviewed_by VARCHAR(255),
     status reservation_status NOT NULL,
     note VARCHAR(255)
 );

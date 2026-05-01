@@ -37,6 +37,8 @@ public class ReservationEntity {
 
 	String reservedBy;
 
+	String reviewedBy;
+
 	@Enumerated(EnumType.STRING)
 	@JdbcTypeCode(SqlTypes.NAMED_ENUM)
 	ReservationStatus status;

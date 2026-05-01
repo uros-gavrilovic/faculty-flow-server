@@ -3,11 +3,14 @@ package dev.urosg.service.impl;
 import dev.urosg.adapter.UserAdapter;
 import dev.urosg.model.dto.User;
 import dev.urosg.model.entity.UserEntity;
+import dev.urosg.model.enumeration.UserRole;
 import dev.urosg.repository.UserRepository;
 import dev.urosg.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -19,8 +22,14 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User fetchUser(UUID uuid) {
-		UserEntity userEntity = findByUUID(uuid);
-		return UserAdapter.toDto(userEntity);
+		return UserAdapter.toDto(findByUUID(uuid));
+	}
+
+	@Override
+	public User fetchByUsername(String username) {
+		return userRepository.findByUsername(username)
+			.map(UserAdapter::toDto)
+			.orElseThrow(() -> new IllegalArgumentException("User with username '" + username + "' not found"));
 	}
 
 	@Override
@@ -34,6 +43,13 @@ public class UserServiceImpl implements UserService {
 
 		UserEntity updatedUserEntity = userRepository.saveAndFlush(userEntity);
 		return UserAdapter.toDto(updatedUserEntity);
+	}
+
+	@Override
+	public Set<User> fetchAdmins() {
+		return userRepository.findByRolesContaining(UserRole.ADMINISTRATOR).stream()
+			.map(UserAdapter::toDto)
+			.collect(java.util.stream.Collectors.toSet());
 	}
 
 	private UserEntity findByUUID(String uuid) {

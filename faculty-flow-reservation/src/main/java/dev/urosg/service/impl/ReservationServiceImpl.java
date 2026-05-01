@@ -2,10 +2,9 @@ package dev.urosg.service.impl;
 
 import dev.urosg.adapter.ReservationAdapter;
 import dev.urosg.client.RoomClient;
-import dev.urosg.model.dto.Reservation;
-import dev.urosg.model.dto.ReservationRequest;
-import dev.urosg.model.dto.ReservationReview;
-import dev.urosg.model.dto.Room;
+import dev.urosg.client.UserClient;
+import dev.urosg.kafka.producer.ReservationEventProducer;
+import dev.urosg.model.dto.*;
 import dev.urosg.model.entity.ReservationEntity;
 import dev.urosg.model.enumeration.ReservationStatus;
 import dev.urosg.repository.ReservationRepository;
@@ -27,6 +26,9 @@ public class ReservationServiceImpl implements ReservationService {
 
 	private final RoomClient roomClient;
 	private final ReservationRepository reservationRepository;
+
+	private final ReservationEventProducer reservationEventProducer;
+	private final UserClient userClient;
 
 	@Override
 	public Set<Reservation> getReservations(LocalDateTime start, LocalDateTime end) {
@@ -84,7 +86,14 @@ public class ReservationServiceImpl implements ReservationService {
 			savedReservation.getName(), savedReservation.getUuid(), savedReservation.getRoom(), request.reservedBy()
 		);
 
-		return ReservationAdapter.toDto(savedReservation);
+		Reservation reservation = ReservationAdapter.toDto(savedReservation);
+		Set<String> adminEmails = userClient.getAdmins().stream()
+			.map(User::email)
+			.collect(java.util.stream.Collectors.toSet());
+
+		reservationEventProducer.sendReservationRequestedEvent(adminEmails, reservation);
+
+		return reservation;
 	}
 
 	@Override
@@ -94,6 +103,7 @@ public class ReservationServiceImpl implements ReservationService {
 		);
 
 		reservationEntity.setStatus(review.status());
+//		reservationEntity.setReviewedBy(review.reviewedBy()); // TODO
 
 		ReservationEntity updatedEntity = this.reservationRepository.saveAndFlush(reservationEntity);
 		log.info(
@@ -101,7 +111,14 @@ public class ReservationServiceImpl implements ReservationService {
 			updatedEntity.getName(), updatedEntity.getUuid(), updatedEntity.getRoom(), updatedEntity.getStatus()
 		);
 
-		return ReservationAdapter.toDto(updatedEntity);
+		Reservation reservation = ReservationAdapter.toDto(updatedEntity);
+
+		User user = userClient.getUserByUsername(reservation.reservedBy());
+		if (user == null) throw new IllegalArgumentException("User with username '" + reservation.reservedBy() + "' not found");
+
+		reservationEventProducer.sendReservationReviewedEvent(user.email(), reservation);
+
+		return reservation;
 	}
 
 	private static void validateArguments(LocalDateTime start, LocalDateTime end) {

@@ -12,6 +12,7 @@ public class ReservationAdapter {
 			entity.getStartTime(),
 			entity.getEndTime(),
 			entity.getReservedBy(),
+			entity.getReviewedBy(),
 			entity.getStatus(),
 			entity.getNote()
 		);
