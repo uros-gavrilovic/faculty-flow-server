@@ -2,6 +2,7 @@ package dev.urosg.controller;
 
 import dev.urosg.model.dto.Reservation;
 import dev.urosg.model.dto.ReservationRequest;
+import dev.urosg.model.dto.ReservationReview;
 import dev.urosg.model.enumeration.ReservationStatus;
 import dev.urosg.service.ReservationService;
 import lombok.RequiredArgsConstructor;
@@ -20,22 +21,27 @@ public class ReservationController {
 	private final ReservationService reservationService;
 
 	@GetMapping
-	Set<Reservation> getAllReservations(@RequestParam LocalDateTime start, @RequestParam LocalDateTime end) {
-		return reservationService.getAllReservations(start, end);
+	Set<Reservation> getReservations(@RequestParam LocalDateTime start, @RequestParam LocalDateTime end) {
+		return reservationService.getReservations(start, end);
 	}
 
-	@GetMapping("/{room}")
-	Set<Reservation> getReservations(@PathVariable String room, @RequestParam LocalDateTime start, @RequestParam LocalDateTime end) {
-		return reservationService.getReservations(room, start, end);
+	@GetMapping("/{roomCode}")
+	Set<Reservation> getReservations(@PathVariable String roomCode, @RequestParam LocalDateTime start, @RequestParam LocalDateTime end) {
+		return reservationService.getReservations(roomCode, start, end);
+	}
+
+	@GetMapping("/request")
+	Set<Reservation> getReservationRequests(@RequestParam LocalDateTime start, @RequestParam LocalDateTime end) {
+		return reservationService.getReservationRequests(start, end);
 	}
 
 	@PostMapping("/request")
-	void requestReservation(@RequestBody ReservationRequest request) {
-		reservationService.requestReservation(request);
+	Reservation requestReservation(@RequestBody ReservationRequest request) {
+		return reservationService.requestReservation(request);
 	}
 
 	@PostMapping("/review")
-	Reservation reviewReservation(@RequestBody UUID uuid, ReservationStatus status) {
-		return reservationService.reviewReservation(uuid, status);
+	Reservation reviewReservation(@RequestBody ReservationReview review) {
+		return reservationService.reviewReservation(review);
 	}
 }

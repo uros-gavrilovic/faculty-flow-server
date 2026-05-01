@@ -3,7 +3,7 @@ package dev.urosg.model.dto;
 import java.time.LocalDateTime;
 
 public record ReservationRequest(
-	String room,
+	String roomCode,
 	String name,
 	String reservedBy,
 	LocalDateTime startTime,

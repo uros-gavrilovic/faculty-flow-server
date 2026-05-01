@@ -1,8 +1,11 @@
 package dev.urosg.service.impl;
 
 import dev.urosg.adapter.ReservationAdapter;
+import dev.urosg.client.RoomClient;
 import dev.urosg.model.dto.Reservation;
 import dev.urosg.model.dto.ReservationRequest;
+import dev.urosg.model.dto.ReservationReview;
+import dev.urosg.model.dto.Room;
 import dev.urosg.model.entity.ReservationEntity;
 import dev.urosg.model.enumeration.ReservationStatus;
 import dev.urosg.repository.ReservationRepository;
@@ -22,10 +25,11 @@ import java.util.UUID;
 @Service
 public class ReservationServiceImpl implements ReservationService {
 
+	private final RoomClient roomClient;
 	private final ReservationRepository reservationRepository;
 
 	@Override
-	public Set<Reservation> getAllReservations(LocalDateTime start, LocalDateTime end) {
+	public Set<Reservation> getReservations(LocalDateTime start, LocalDateTime end) {
 		validateArguments(start, end);
 
 		Set<ReservationEntity> reservationEntities = reservationRepository
@@ -35,29 +39,38 @@ public class ReservationServiceImpl implements ReservationService {
 	}
 
 	@Override
-	public Set<Reservation> getReservations(String room, LocalDateTime start, LocalDateTime end) {
+	public Set<Reservation> getReservations(String roomCode, LocalDateTime start, LocalDateTime end) {
 		validateArguments(start, end);
 
 		Set<ReservationEntity> reservationEntities = reservationRepository
-			.findByStartTimeLessThanAndEndTimeGreaterThanAndRoom(end, start, room);
+			.findByStartTimeLessThanAndEndTimeGreaterThanAndRoom(end, start, roomCode);
 
 		return mapToDTOs(reservationEntities);
 	}
 
 	@Override
-	public void requestReservation(ReservationRequest request) {
-//
-//		return restClient.get()
-//			.uri("http://room-service/api/rooms/exists/{name}", roomName)
-//			.header(HttpHeaders.AUTHORIZATION, token)
-//			.retrieve()
-//			.body(Boolean.class);
-//		// Show me how to call room Api via webClient
+	public Set<Reservation> getReservationRequests(LocalDateTime start, LocalDateTime end) {
+		validateArguments(start, end);
+
+		Set<ReservationEntity> reservationRequestEntities =
+			reservationRepository.findByStartTimeLessThanAndEndTimeGreaterThanAndStatus(end, start, ReservationStatus.PENDING);
+
+		return mapToDTOs(reservationRequestEntities);
+	}
+
+	@Override
+	public Reservation requestReservation(ReservationRequest request) {
+		Set<Room> rooms = roomClient.getAllRooms();
+		rooms.stream()
+			.filter(r -> r.code().equalsIgnoreCase(request.roomCode()))
+			.findFirst()
+			.orElseThrow(() -> new IllegalArgumentException("Room with code '" + request.roomCode() + "' not found"));
 
 		ReservationEntity newReservation = ReservationEntity
 			.builder()
+				.uuid(UUID.randomUUID())
 				.name(request.name())
-				.room(request.room())
+				.room(request.roomCode())
 				.startTime(request.startTime())
 				.endTime(request.endTime())
 				.reservedBy(request.reservedBy())
@@ -67,22 +80,24 @@ public class ReservationServiceImpl implements ReservationService {
 
 		ReservationEntity savedReservation = reservationRepository.saveAndFlush(newReservation);
 		log.info(
-			"Created new reservation request '{}' ({}) for room '{}'",
-			savedReservation.getName(), savedReservation.getUuid(), savedReservation.getRoom()
+			"Created new reservation request '{}' ({}) for roomCode '{}' by user '{}'",
+			savedReservation.getName(), savedReservation.getUuid(), savedReservation.getRoom(), request.reservedBy()
 		);
+
+		return ReservationAdapter.toDto(savedReservation);
 	}
 
 	@Override
-	public Reservation reviewReservation(UUID uuid, ReservationStatus status) {
-		ReservationEntity reservationEntity = this.reservationRepository.findByUuid(uuid).orElseThrow(
-			() -> new IllegalArgumentException("Reservation with UUID '" + uuid + "' not found")
+	public Reservation reviewReservation(ReservationReview review) {
+		ReservationEntity reservationEntity = this.reservationRepository.findByUuid(review.uuid()).orElseThrow(
+			() -> new IllegalArgumentException("Reservation with UUID '" + review.uuid() + "' not found")
 		);
 
-		reservationEntity.setStatus(status);
+		reservationEntity.setStatus(review.status());
 
 		ReservationEntity updatedEntity = this.reservationRepository.saveAndFlush(reservationEntity);
 		log.info(
-			"Updated reservation '{}' ({}) for room '{}' to status '{}'",
+			"Updated reservation '{}' ({}) for roomCode '{}' to status '{}'",
 			updatedEntity.getName(), updatedEntity.getUuid(), updatedEntity.getRoom(), updatedEntity.getStatus()
 		);
 
