@@ -11,7 +11,8 @@ CREATE TABLE reservation (
     reserved_by VARCHAR(255) NOT NULL,
     reviewed_by VARCHAR(255),
     status reservation_status NOT NULL,
-    note VARCHAR(255)
+    note VARCHAR(255),
+    comment VARCHAR(255)
 );
 
 ALTER TABLE reservation

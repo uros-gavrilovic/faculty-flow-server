@@ -3,12 +3,14 @@ package dev.urosg.service.impl;
 import dev.urosg.adapter.ReservationAdapter;
 import dev.urosg.client.RoomClient;
 import dev.urosg.client.UserClient;
+import dev.urosg.context.RequestContext;
 import dev.urosg.kafka.producer.ReservationEventProducer;
 import dev.urosg.model.dto.*;
 import dev.urosg.model.entity.ReservationEntity;
 import dev.urosg.model.enumeration.ReservationStatus;
 import dev.urosg.repository.ReservationRepository;
 import dev.urosg.service.ReservationService;
+import dev.urosg.util.AuthenticationUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -24,6 +26,7 @@ import java.util.UUID;
 @Service
 public class ReservationServiceImpl implements ReservationService {
 
+	private final RequestContext requestContext;
 	private final RoomClient roomClient;
 	private final ReservationRepository reservationRepository;
 
@@ -75,7 +78,7 @@ public class ReservationServiceImpl implements ReservationService {
 				.room(request.roomCode())
 				.startTime(request.startTime())
 				.endTime(request.endTime())
-				.reservedBy(request.reservedBy())
+				.reservedBy(request.reservedBy() == null ? AuthenticationUtils.getFullyAuthenticatedUser(requestContext) : request.reservedBy())
 				.note(request.note())
 				.status(ReservationStatus.PENDING)
 			.build();
@@ -103,15 +106,17 @@ public class ReservationServiceImpl implements ReservationService {
 		);
 
 		reservationEntity.setStatus(review.status());
-//		reservationEntity.setReviewedBy(review.reviewedBy()); // TODO: Add authentication util
+		reservationEntity.setReviewedBy(AuthenticationUtils.getFullyAuthenticatedUser(requestContext));
+		reservationEntity.setComment(review.comment());
 
 		ReservationEntity updatedEntity = this.reservationRepository.saveAndFlush(reservationEntity);
 		log.info(
-			"Updated reservation '{}' ({}) for roomCode '{}' to status '{}'",
+			"Reviewed reservation '{}' ({}) for roomCode '{}' to status '{}'",
 			updatedEntity.getName(), updatedEntity.getUuid(), updatedEntity.getRoom(), updatedEntity.getStatus()
 		);
 
 		Reservation reservation = ReservationAdapter.toDto(updatedEntity);
+		log.info("Reservation review: {}", reservation);
 
 		User user = userClient.getUserByUsername(reservation.reservedBy());
 		if (user == null) throw new IllegalArgumentException("User with username '" + reservation.reservedBy() + "' not found");

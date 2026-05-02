@@ -41,7 +41,8 @@ public class ReservationEventProducer {
 				reservation.startTime(),
 				reservation.endTime(),
 				reservation.reviewedBy(),
-				reservation.note(),
+				reservation.status().toString(),
+				reservation.comment(),
 				email
 			)
 		);

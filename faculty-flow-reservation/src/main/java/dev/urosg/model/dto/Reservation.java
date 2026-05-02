@@ -13,6 +13,7 @@ public record Reservation(
 	String reservedBy,
 	String reviewedBy,
 	ReservationStatus status,
-	String note
+	String note,
+	String comment
 ) {
 }

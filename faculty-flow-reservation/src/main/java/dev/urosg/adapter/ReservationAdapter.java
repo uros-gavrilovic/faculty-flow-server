@@ -14,7 +14,8 @@ public class ReservationAdapter {
 			entity.getReservedBy(),
 			entity.getReviewedBy(),
 			entity.getStatus(),
-			entity.getNote()
+			entity.getNote(),
+			entity.getComment()
 		);
 	}
 }

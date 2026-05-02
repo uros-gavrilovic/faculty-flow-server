@@ -60,7 +60,7 @@ public class MailServiceImpl implements MailService {
 
 	@Override
 	public void sendReservationReviewedMail(
-		String to, String name, String room, LocalDateTime startTime, LocalDateTime endTime, String reviewedBy, String note
+		String to, String name, String room, LocalDateTime startTime, LocalDateTime endTime, String reviewedBy, String status, String comment
 	) {
 		Context context = new Context();
 		context.setVariable(PlaceholderConstant.NAME, name);
@@ -68,7 +68,8 @@ public class MailServiceImpl implements MailService {
 		context.setVariable(PlaceholderConstant.START_TIME, startTime.format(formatter));
 		context.setVariable(PlaceholderConstant.END_TIME, endTime.format(formatter));
 		context.setVariable(PlaceholderConstant.REVIEWED_BY, reviewedBy);
-		context.setVariable(PlaceholderConstant.NOTE, note);
+		context.setVariable(PlaceholderConstant.STATUS, status);
+		context.setVariable(PlaceholderConstant.COMMENT, comment);
 
 		sendMail(to, context, MailType.RESERVATION_REVIEWED);
 		log.info("Reservation reviewed e-mail sent to '{}'", to);

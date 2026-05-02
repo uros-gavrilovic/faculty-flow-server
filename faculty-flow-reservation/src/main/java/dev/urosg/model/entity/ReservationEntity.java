@@ -44,4 +44,6 @@ public class ReservationEntity {
 	ReservationStatus status;
 
 	String note;
+
+	String comment;
 }

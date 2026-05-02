@@ -20,6 +20,7 @@ public interface MailService {
 		LocalDateTime startTime,
 		LocalDateTime endTime,
 		String reviewedBy,
-		String note
+		String status,
+		String comment
 	);
 }

@@ -28,21 +28,16 @@
         </p>
 
         <div style="font-size:14px;color:#333;line-height:1.6;">
-            <p><b>Room:</b> <span th:text="${room}">Room A</span></p>
-            <p><b>Start:</b> <span th:text="${startTime}">2026-01-01 10:00</span></p>
-            <p><b>End:</b> <span th:text="${endTime}">2026-01-01 12:00</span></p>
-            <p><b>Reviewed by:</b> <span th:text="${reviewedBy}">John Doe</span></p>
-            <p style="margin:10px 0 0 0;"><b>Note:</b></p>
+            <p><b>Room:</b> <span th:text="${room}">/</span></p>
+            <p><b>Start:</b> <span th:text="${startTime}">/</span></p>
+            <p><b>End:</b> <span th:text="${endTime}">/</span></p>
+            <hr/>
+            <p><b>Reviewed by:</b> <span th:text="${reviewedBy}">/</span></p>
+            <p><b>Status:</b> <span th:text="${status}">/</span></p>
+            <p style="margin:10px 0 0 0;"><b>Comment:</b></p>
             <div style="margin-top:6px;background:#f1f5f9;border:1px solid #e2e8f0;padding:10px 12px;border-radius:8px;color:#334155;white-space:pre-wrap;"
-                 th:text="${note}">/</div>
+                 th:text="${comment}">/</div>
         </div>
-
-        <div style="margin-top:22px;padding:12px;border-radius:8px;background:#f1f5f9;">
-            <p style="margin:0;font-size:13px;color:#0f172a;">
-                Status: <b th:text="${status}">/</b>
-            </p>
-        </div>
-
     </div>
 
     <!-- Footer -->

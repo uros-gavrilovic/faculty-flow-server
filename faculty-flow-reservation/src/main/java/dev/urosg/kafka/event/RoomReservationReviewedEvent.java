@@ -8,6 +8,7 @@ public record RoomReservationReviewedEvent(
 	LocalDateTime startTime,
 	LocalDateTime endTime,
 	String reviewedBy,
+	String status,
 	String comment,
 	String recipientEmail
 ) {}
