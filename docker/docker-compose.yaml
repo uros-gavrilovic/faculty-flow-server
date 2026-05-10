@@ -39,6 +39,8 @@ services:
       context: ../faculty-flow-gateway
     image: faculty-flow-gateway:latest
     container_name: faculty-flow-gateway
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
 #    depends_on:
 #      - faculty-flow-user
 #      - faculty-flow-room
