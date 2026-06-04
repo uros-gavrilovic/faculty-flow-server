@@ -52,27 +52,27 @@ services:
       context: ../faculty-flow-user
     image: faculty-flow-user:latest
     container_name: faculty-flow-user
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   faculty-flow-reservation:
     build:
       context: ../faculty-flow-reservation
     image: faculty-flow-reservation:latest
     container_name: faculty-flow-reservation
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   faculty-flow-room:
     build:
       context: ../faculty-flow-room
     image: faculty-flow-room:latest
     container_name: faculty-flow-room
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   faculty-flow-mail:
     build:

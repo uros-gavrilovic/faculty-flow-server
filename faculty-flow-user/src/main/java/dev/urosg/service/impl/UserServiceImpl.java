@@ -1,6 +1,8 @@
 package dev.urosg.service.impl;
 
+import dev.urosg.adapter.SearchResponseAdapter;
 import dev.urosg.adapter.UserAdapter;
+import dev.urosg.model.dto.SearchResponse;
 import dev.urosg.model.dto.User;
 import dev.urosg.model.entity.UserEntity;
 import dev.urosg.model.enumeration.UserRole;
@@ -8,6 +10,10 @@ import dev.urosg.repository.UserRepository;
 import dev.urosg.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -50,6 +56,19 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findByRolesContaining(UserRole.ADMINISTRATOR).stream()
 			.map(UserAdapter::toDto)
 			.collect(java.util.stream.Collectors.toSet());
+	}
+
+	public SearchResponse<User> fetchUsers(int page, int size, String sortBy, String direction) {
+		Sort sort = direction.equalsIgnoreCase("desc") ?
+			Sort.by(sortBy).descending() :
+			Sort.by(sortBy).ascending();
+
+		Pageable pageable = PageRequest.of(page, size, sort);
+
+		return SearchResponseAdapter.from(
+			userRepository.findAll(pageable),
+			UserAdapter::toDto
+		);
 	}
 
 	private UserEntity findByUUID(String uuid) {

@@ -9,6 +9,7 @@ public record User(
 	String lastName,
 	String email,
 	String username,
+
 	Set<UserRole> roles
 ) {
 	public User(String uuid, String firstName, String lastName, String email, String username) {
