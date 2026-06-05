@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
 			.collect(java.util.stream.Collectors.toSet());
 	}
 
-	public SearchResponse<User> fetchUsers(int page, int size, String sortBy, String direction) {
+	public SearchResponse<User> searchUsers(int page, int size, String sortBy, String direction) {
 		Sort sort = direction.equalsIgnoreCase("desc") ?
 			Sort.by(sortBy).descending() :
 			Sort.by(sortBy).ascending();

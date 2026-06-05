@@ -10,5 +10,5 @@ public interface UserService {
 	User fetchByUsername(String username);
 	User updateUser(User user);
 	Set<User> fetchAdmins();
-	SearchResponse<User> fetchUsers(int page, int size, String sortBy, String direction);
+	SearchResponse<User> searchUsers(int page, int size, String sortBy, String direction);
 }

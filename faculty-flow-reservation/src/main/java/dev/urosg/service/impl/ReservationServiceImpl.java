@@ -1,6 +1,7 @@
 package dev.urosg.service.impl;
 
 import dev.urosg.adapter.ReservationAdapter;
+import dev.urosg.adapter.SearchResponseAdapter;
 import dev.urosg.client.RoomClient;
 import dev.urosg.client.UserClient;
 import dev.urosg.context.RequestContext;
@@ -8,12 +9,17 @@ import dev.urosg.kafka.producer.ReservationEventProducer;
 import dev.urosg.model.dto.*;
 import dev.urosg.model.entity.ReservationEntity;
 import dev.urosg.model.enumeration.ReservationStatus;
+import dev.urosg.model.enumeration.UserRole;
 import dev.urosg.repository.ReservationRepository;
 import dev.urosg.service.ReservationService;
 import dev.urosg.util.AuthenticationUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
@@ -32,6 +38,28 @@ public class ReservationServiceImpl implements ReservationService {
 
 	private final ReservationEventProducer reservationEventProducer;
 	private final UserClient userClient;
+
+	@Override
+	public SearchResponse<Reservation> searchReservations(int page, int size, String sortBy, String direction) {
+		Sort sort = "desc".equalsIgnoreCase(direction)
+			? Sort.by(sortBy).descending()
+			: Sort.by(sortBy).ascending();
+
+		Pageable pageable = PageRequest.of(page, size, sort);
+		Page<ReservationEntity> result;
+
+		AuthenticatedUser user = AuthenticationUtils.getAuthentication(requestContext);
+		String currentUser = user != null ? user.username() : null;
+		boolean isAdmin = user != null && user.roles().contains(UserRole.ADMINISTRATOR);
+
+		if (isAdmin) {
+			result = reservationRepository.findAll(pageable);
+		} else {
+			result = reservationRepository.findByReservedByEqualsIgnoreCase(currentUser, pageable);
+		}
+
+		return SearchResponseAdapter.from(result, ReservationAdapter::toDto);
+	}
 
 	@Override
 	public Set<Reservation> getReservations(LocalDateTime start, LocalDateTime end) {

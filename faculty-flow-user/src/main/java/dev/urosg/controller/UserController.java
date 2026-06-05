@@ -6,7 +6,7 @@ import dev.urosg.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Page;
+
 import java.util.Set;
 import java.util.UUID;
 
@@ -30,13 +30,13 @@ public class UserController {
 	}
 
 	@GetMapping("/search")
-	public SearchResponse<User> fetchUsers(
+	public SearchResponse<User> searchUsers(
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "10") int size,
 		@RequestParam(defaultValue = "lastName") String sortBy,
 		@RequestParam(defaultValue = "asc") String direction
 	) {
-		return userService.fetchUsers(page, size, sortBy, direction);
+		return userService.searchUsers(page, size, sortBy, direction);
 	}
 
 	@PutMapping

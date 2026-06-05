@@ -3,11 +3,13 @@ package dev.urosg.util;
 import dev.urosg.context.RequestContext;
 import dev.urosg.model.dto.AuthenticatedUser;
 import dev.urosg.model.constant.JwtClaim;
+import dev.urosg.model.enumeration.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import javax.crypto.SecretKey;
+import java.util.List;
 import java.util.Set;
 
 public class AuthenticationUtils {
@@ -32,7 +34,10 @@ public class AuthenticationUtils {
 		Claims claims = parseClaims(token);
 		return new AuthenticatedUser(
 			claims.getSubject(),
-			Set.copyOf(claims.get(JwtClaim.ROLES.name(), java.util.List.class))
+			((List<String>) claims.get(JwtClaim.ROLES.name(), List.class))
+				.stream()
+				.map(UserRole::valueOf)
+				.collect(java.util.stream.Collectors.toSet())
 		);
 	}
 

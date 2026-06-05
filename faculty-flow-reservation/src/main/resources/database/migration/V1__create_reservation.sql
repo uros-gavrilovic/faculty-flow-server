@@ -1,4 +1,4 @@
-CREATE TYPE reservation_status AS ENUM ('PENDING', 'ACCEPTED', 'REJECTED');
+CREATE TYPE reservation_status AS ENUM ('PENDING', 'CANCELED', 'ACCEPTED', 'REJECTED');
 
 CREATE TABLE reservation (
     id BIGSERIAL PRIMARY KEY,
