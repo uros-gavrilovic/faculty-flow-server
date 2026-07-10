@@ -36,6 +36,11 @@ public class ReservationController {
 		return reservationService.getReservations(roomCode, start, end);
 	}
 
+	@PutMapping
+	Reservation updateReservation(@RequestBody Reservation reservation) {
+		return reservationService.updateReservation(reservation);
+	}
+
 	@GetMapping("/request")
 	Set<Reservation> getReservationRequests(@RequestParam LocalDateTime start, @RequestParam LocalDateTime end) {
 		return reservationService.getReservationRequests(start, end);

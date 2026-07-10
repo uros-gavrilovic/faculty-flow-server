@@ -104,6 +104,27 @@ public class ReservationServiceImpl implements ReservationService {
 	}
 
 	@Override
+	public Reservation updateReservation(Reservation reservation) {
+		ReservationEntity reservationEntity = this.reservationRepository.findByUuid(reservation.uuid())
+			.orElseThrow(() -> new IllegalArgumentException("Reservation with UUID '" + reservation.uuid() + "' not found"));
+
+		reservationEntity.setName(reservation.name());
+		reservationEntity.setRoom(reservation.room());
+		reservationEntity.setStartTime(reservation.startTime());
+		reservationEntity.setEndTime(reservation.endTime());
+		reservationEntity.setReservedBy(reservation.reservedBy());
+		reservationEntity.setNote(reservation.note());
+
+		ReservationEntity updatedEntity = this.reservationRepository.saveAndFlush(reservationEntity);
+		log.info(
+			"Updated reservation '{}' ({}) for roomCode '{}'",
+			updatedEntity.getName(), updatedEntity.getUuid(), updatedEntity.getRoom()
+		);
+
+		return ReservationAdapter.toDto(updatedEntity);
+	}
+
+	@Override
 	public Reservation requestReservation(ReservationRequest request) {
 		Set<Room> rooms = roomClient.getAllRooms();
 		rooms.stream()
