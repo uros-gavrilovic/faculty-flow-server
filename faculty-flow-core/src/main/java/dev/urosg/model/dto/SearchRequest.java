@@ -1,14 +1,13 @@
-//package dev.urosg.model.dto;
-//
-//import javax.swing.*;
-//
-//public record SearchRequest(
-//	int page,
-//	int size,
-//	String sort,
-//	SortOrder order
-//) {
-//	public SearchRequest(int page, int size) {
-//		this(page, size, null, SortOrder.ASCENDING);
-//	}
-//}
+package dev.urosg.model.dto;
+
+import lombok.Builder;
+import org.springframework.data.domain.Sort;
+
+@Builder
+public record SearchRequest<T>(
+	int page,
+	int size,
+	String sortBy,
+	Sort.Direction direction,
+	T filter
+) {}

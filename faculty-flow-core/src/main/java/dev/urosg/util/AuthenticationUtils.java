@@ -10,7 +10,6 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import javax.crypto.SecretKey;
 import java.util.List;
-import java.util.Set;
 
 public class AuthenticationUtils {
 
@@ -20,13 +19,11 @@ public class AuthenticationUtils {
 		AuthenticationUtils.secret = secret;
 	}
 
-	public static String getFullyAuthenticatedUser(RequestContext requestContext) {
-		AuthenticatedUser user = fromToken(requestContext.getToken());
-		return user != null ? user.username() : null;
-	}
-
 	public static AuthenticatedUser getAuthentication(RequestContext requestContext) {
-		return fromToken(requestContext.getToken());
+		AuthenticatedUser authenticatedUser = fromToken(requestContext.getToken());
+		if (authenticatedUser == null) throw new IllegalStateException("User not authenticated");
+
+		return authenticatedUser;
 	}
 
 	public static AuthenticatedUser fromToken(String token) {
@@ -51,5 +48,15 @@ public class AuthenticationUtils {
 
 	private static SecretKey getSigningKey() {
 		return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+	}
+
+	public static boolean isCurrentUserAdmin(RequestContext requestContext) {
+		AuthenticatedUser user = getAuthentication(requestContext);
+		return user.roles().contains(UserRole.ADMINISTRATOR);
+	}
+
+	public static String getCurrentUserUsername(RequestContext requestContext) {
+		AuthenticatedUser user = getAuthentication(requestContext);
+		return user.username();
 	}
 }

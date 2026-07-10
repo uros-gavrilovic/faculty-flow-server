@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 public interface ReservationService {
+	SearchResponse<Reservation> searchReservations(SearchRequest<ReservationFilter> searchRequest);
 	SearchResponse<Reservation> searchReservations(int page, int size, String sortBy, String direction);
 	Set<Reservation> getReservations(LocalDateTime start, LocalDateTime end);
 	Set<Reservation> getReservations(String roomCode, LocalDateTime start, LocalDateTime end);

@@ -9,10 +9,11 @@ import dev.urosg.kafka.producer.ReservationEventProducer;
 import dev.urosg.model.dto.*;
 import dev.urosg.model.entity.ReservationEntity;
 import dev.urosg.model.enumeration.ReservationStatus;
-import dev.urosg.model.enumeration.UserRole;
 import dev.urosg.repository.ReservationRepository;
+import dev.urosg.repository.specification.ReservationSpecifications;
 import dev.urosg.service.ReservationService;
 import dev.urosg.util.AuthenticationUtils;
+import dev.urosg.util.SearchUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -35,9 +36,20 @@ public class ReservationServiceImpl implements ReservationService {
 	private final RequestContext requestContext;
 	private final RoomClient roomClient;
 	private final ReservationRepository reservationRepository;
-
 	private final ReservationEventProducer reservationEventProducer;
 	private final UserClient userClient;
+
+	@Override
+	public SearchResponse<Reservation> searchReservations(SearchRequest<ReservationFilter> request) {
+		ReservationFilter filter = applyFilter(request.filter()); // apply 'reservedBy' filter for non-admin users
+
+		Page<Reservation> page = reservationRepository.findAll(
+			ReservationSpecifications.filter(filter),
+			SearchUtil.toPageable(request)
+		);
+
+		return SearchUtil.toSearchResponse(page);
+	}
 
 	@Override
 	public SearchResponse<Reservation> searchReservations(int page, int size, String sortBy, String direction) {
@@ -48,14 +60,14 @@ public class ReservationServiceImpl implements ReservationService {
 		Pageable pageable = PageRequest.of(page, size, sort);
 		Page<ReservationEntity> result;
 
-		AuthenticatedUser user = AuthenticationUtils.getAuthentication(requestContext);
-		String currentUser = user != null ? user.username() : null;
-		boolean isAdmin = user != null && user.roles().contains(UserRole.ADMINISTRATOR);
-
+		boolean isAdmin = AuthenticationUtils.isCurrentUserAdmin(requestContext);
 		if (isAdmin) {
 			result = reservationRepository.findAll(pageable);
 		} else {
-			result = reservationRepository.findByReservedByEqualsIgnoreCase(currentUser, pageable);
+			result = reservationRepository.findByReservedByEqualsIgnoreCase(
+				AuthenticationUtils.getCurrentUserUsername(requestContext),
+				pageable
+			);
 		}
 
 		return SearchResponseAdapter.from(result, ReservationAdapter::toDto);
@@ -68,7 +80,7 @@ public class ReservationServiceImpl implements ReservationService {
 		Set<ReservationEntity> reservationEntities = reservationRepository
 			.findByStartTimeLessThanAndEndTimeGreaterThan(end, start);
 
-		return mapToDTOs(reservationEntities);
+		return mapToSet(reservationEntities);
 	}
 
 	@Override
@@ -78,7 +90,7 @@ public class ReservationServiceImpl implements ReservationService {
 		Set<ReservationEntity> reservationEntities = reservationRepository
 			.findByStartTimeLessThanAndEndTimeGreaterThanAndRoom(end, start, roomCode);
 
-		return mapToDTOs(reservationEntities);
+		return mapToSet(reservationEntities);
 	}
 
 	@Override
@@ -88,7 +100,7 @@ public class ReservationServiceImpl implements ReservationService {
 		Set<ReservationEntity> reservationRequestEntities =
 			reservationRepository.findByStartTimeLessThanAndEndTimeGreaterThanAndStatus(end, start, ReservationStatus.PENDING);
 
-		return mapToDTOs(reservationRequestEntities);
+		return mapToSet(reservationRequestEntities);
 	}
 
 	@Override
@@ -106,7 +118,7 @@ public class ReservationServiceImpl implements ReservationService {
 				.room(request.roomCode())
 				.startTime(request.startTime())
 				.endTime(request.endTime())
-				.reservedBy(request.reservedBy() == null ? AuthenticationUtils.getFullyAuthenticatedUser(requestContext) : request.reservedBy())
+				.reservedBy(request.reservedBy() == null ? AuthenticationUtils.getCurrentUserUsername(requestContext) : request.reservedBy())
 				.note(request.note())
 				.status(ReservationStatus.PENDING)
 			.build();
@@ -134,7 +146,7 @@ public class ReservationServiceImpl implements ReservationService {
 		);
 
 		reservationEntity.setStatus(review.status());
-		reservationEntity.setReviewedBy(AuthenticationUtils.getFullyAuthenticatedUser(requestContext));
+		reservationEntity.setReviewedBy(AuthenticationUtils.getCurrentUserUsername(requestContext));
 		reservationEntity.setComment(review.comment());
 
 		ReservationEntity updatedEntity = this.reservationRepository.saveAndFlush(reservationEntity);
@@ -159,9 +171,18 @@ public class ReservationServiceImpl implements ReservationService {
 		if (start.isAfter(end)) throw new IllegalArgumentException("Start date must be before end date");
 	}
 
-	private static @NonNull Set<Reservation> mapToDTOs(Set<ReservationEntity> reservationEntities) {
+	private static @NonNull Set<Reservation> mapToSet(Set<ReservationEntity> reservationEntities) {
 		return reservationEntities.stream()
 			.map(ReservationAdapter::toDto)
 			.collect(java.util.stream.Collectors.toSet());
+	}
+
+	private ReservationFilter applyFilter(ReservationFilter filter) {
+		boolean isAdmin = AuthenticationUtils.isCurrentUserAdmin(requestContext);
+		if (isAdmin) return filter;
+
+		String username = AuthenticationUtils.getCurrentUserUsername(requestContext);
+		return filter
+			.withReservedBy(username);
 	}
 }
