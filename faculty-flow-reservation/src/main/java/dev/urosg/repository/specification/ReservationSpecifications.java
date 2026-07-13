@@ -11,7 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 @NoArgsConstructor
 public final class ReservationSpecifications {
 
-	public static Specification<Reservation> filter(ReservationFilter filter) {
+	public static Specification<Reservation> toSpecification(ReservationFilter filter) {
 		return (root, query, cb) -> {
 			if (filter == null) return cb.conjunction();
 

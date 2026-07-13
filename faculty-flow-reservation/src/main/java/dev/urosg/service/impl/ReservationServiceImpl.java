@@ -1,7 +1,6 @@
 package dev.urosg.service.impl;
 
 import dev.urosg.adapter.ReservationAdapter;
-import dev.urosg.adapter.SearchResponseAdapter;
 import dev.urosg.client.RoomClient;
 import dev.urosg.client.UserClient;
 import dev.urosg.context.RequestContext;
@@ -18,9 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
@@ -41,36 +37,14 @@ public class ReservationServiceImpl implements ReservationService {
 
 	@Override
 	public SearchResponse<Reservation> searchReservations(SearchRequest<ReservationFilter> request) {
-		ReservationFilter filter = applyFilter(request.filter()); // apply 'reservedBy' filter for non-admin users
+		ReservationFilter filter = applyFilter(request.filter());
 
 		Page<Reservation> page = reservationRepository.findAll(
-			ReservationSpecifications.filter(filter),
-			SearchUtil.toPageable(request)
+			ReservationSpecifications.toSpecification(filter),
+			SearchUtil.toPageable(request, filter)
 		);
 
 		return SearchUtil.toSearchResponse(page);
-	}
-
-	@Override
-	public SearchResponse<Reservation> searchReservations(int page, int size, String sortBy, String direction) {
-		Sort sort = "desc".equalsIgnoreCase(direction)
-			? Sort.by(sortBy).descending()
-			: Sort.by(sortBy).ascending();
-
-		Pageable pageable = PageRequest.of(page, size, sort);
-		Page<ReservationEntity> result;
-
-		boolean isAdmin = AuthenticationUtils.isCurrentUserAdmin(requestContext);
-		if (isAdmin) {
-			result = reservationRepository.findAll(pageable);
-		} else {
-			result = reservationRepository.findByReservedByEqualsIgnoreCase(
-				AuthenticationUtils.getCurrentUserUsername(requestContext),
-				pageable
-			);
-		}
-
-		return SearchResponseAdapter.from(result, ReservationAdapter::toDto);
 	}
 
 	@Override
@@ -199,11 +173,15 @@ public class ReservationServiceImpl implements ReservationService {
 	}
 
 	private ReservationFilter applyFilter(ReservationFilter filter) {
+		ReservationFilter safeFilter = filter == null ?
+			ReservationFilter.builder().build() :
+			filter;
+
 		boolean isAdmin = AuthenticationUtils.isCurrentUserAdmin(requestContext);
-		if (isAdmin) return filter;
+		if (isAdmin) return safeFilter;
 
 		String username = AuthenticationUtils.getCurrentUserUsername(requestContext);
-		return filter
+		return safeFilter
 			.withReservedBy(username);
 	}
 }

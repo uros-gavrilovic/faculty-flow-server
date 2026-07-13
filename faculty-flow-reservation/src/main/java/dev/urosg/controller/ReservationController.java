@@ -16,14 +16,9 @@ public class ReservationController {
 
 	private final ReservationService reservationService;
 
-	@GetMapping("/search")
-	public SearchResponse<Reservation> searchReservations(
-		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "10") int size,
-		@RequestParam(defaultValue = "startTime") String sortBy,
-		@RequestParam(defaultValue = "asc") String direction
-	) {
-		return reservationService.searchReservations(page, size, sortBy, direction);
+	@PostMapping("/search")
+	public SearchResponse<Reservation> searchReservations(@RequestBody SearchRequest<ReservationFilter> searchRequest) {
+		return reservationService.searchReservations(searchRequest);
 	}
 
 	@GetMapping
