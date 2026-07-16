@@ -37,11 +37,9 @@ public class ReservationServiceImpl implements ReservationService {
 
 	@Override
 	public SearchResponse<Reservation> searchReservations(SearchRequest<ReservationFilter> request) {
-		ReservationFilter filter = applyFilter(request.filter());
-
 		Page<Reservation> page = reservationRepository.findAll(
-			ReservationSpecifications.toSpecification(filter),
-			SearchUtil.toPageable(request, filter)
+			ReservationSpecifications.toSpecification(request.filter()),
+			SearchUtil.toPageable(request)
 		);
 
 		return SearchUtil.toSearchResponse(page);
@@ -170,18 +168,5 @@ public class ReservationServiceImpl implements ReservationService {
 		return reservationEntities.stream()
 			.map(ReservationAdapter::toDto)
 			.collect(java.util.stream.Collectors.toSet());
-	}
-
-	private ReservationFilter applyFilter(ReservationFilter filter) {
-		ReservationFilter safeFilter = filter == null ?
-			ReservationFilter.builder().build() :
-			filter;
-
-		boolean isAdmin = AuthenticationUtils.isCurrentUserAdmin(requestContext);
-		if (isAdmin) return safeFilter;
-
-		String username = AuthenticationUtils.getCurrentUserUsername(requestContext);
-		return safeFilter
-			.withReservedBy(username);
 	}
 }

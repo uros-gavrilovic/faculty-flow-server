@@ -11,9 +11,16 @@ import java.util.HashSet;
 
 public class SearchUtil {
 
-	public static <F extends SortableFilter> Pageable toPageable(SearchRequest<F> request, F filter) {
+	public static <F extends SortableFilter> Pageable toPageable(SearchRequest<F> request) {
+		return toPageable(request, request.filter());
+	}
+
+	private static <F extends SortableFilter> Pageable toPageable(SearchRequest<F> request, F filter) {
 		int page = request.page() != null ? request.page() : 0;
 		int size = request.size() != null ? request.size() : 10;
+
+		if (filter == null) return PageRequest.of(page, size);
+
 		String sortBy = request.sortBy() != null ? request.sortBy() : filter.defaultSortBy();
 		Sort.Direction direction = request.direction() != null ? request.direction() : Sort.Direction.ASC;
 
