@@ -72,6 +72,7 @@ public class AuthServiceImpl implements AuthService {
 		UserEntity userEntity = UserAdapter.from(request);
 		userEntity.setUuid(UUID.randomUUID());
 		userEntity.setPassword(passwordEncoder.encode(request.password()));
+		userEntity.setRoles(request.roles());
 
 		UserEntity savedUserEntity = userRepository.saveAndFlush(userEntity);
 		log.info("User '{}' successfully created", savedUserEntity.getUsername());
