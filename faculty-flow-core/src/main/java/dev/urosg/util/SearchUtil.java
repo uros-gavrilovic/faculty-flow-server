@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 public class SearchUtil {
 
@@ -33,7 +33,7 @@ public class SearchUtil {
 
 	public static <T> SearchResponse<T> toSearchResponse(Page<T> page) {
 		return new SearchResponse<>(
-			new HashSet<>(page.getContent()),
+			new LinkedHashSet<>(page.getContent()),
 			page.getTotalElements(),
 			page.getNumber(),
 			page.getSize()
