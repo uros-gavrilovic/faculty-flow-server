@@ -52,6 +52,8 @@ services:
       context: ../faculty-flow-user
     image: faculty-flow-user:latest
     container_name: faculty-flow-user
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
     depends_on:
       postgres:
         condition: service_healthy
@@ -61,6 +63,8 @@ services:
       context: ../faculty-flow-reservation
     image: faculty-flow-reservation:latest
     container_name: faculty-flow-reservation
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
     depends_on:
       postgres:
         condition: service_healthy
@@ -70,6 +74,8 @@ services:
       context: ../faculty-flow-room
     image: faculty-flow-room:latest
     container_name: faculty-flow-room
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
     depends_on:
       postgres:
         condition: service_healthy
@@ -79,6 +85,8 @@ services:
       context: ../faculty-flow-mail
     image: faculty-flow-mail:latest
     container_name: faculty-flow-mail
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
 
 volumes:
   pg_data:

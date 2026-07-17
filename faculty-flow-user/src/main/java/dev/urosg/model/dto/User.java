@@ -9,10 +9,11 @@ public record User(
 	String lastName,
 	String email,
 	String username,
+	boolean isVerified,
 
 	Set<UserRole> roles
 ) {
-	public User(String uuid, String firstName, String lastName, String email, String username) {
-		this(uuid, firstName, lastName, email, username, null);
+	public User(String uuid, String firstName, String lastName, String email, String username, boolean isVerified) {
+		this(uuid, firstName, lastName, email, username, isVerified, null);
 	}
 }

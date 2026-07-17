@@ -47,7 +47,7 @@ public class MockUserLoader {
 			u.setLastName(lastName);
 			u.setEmail(firstName.toLowerCase() + "." + lastName.toLowerCase() + "@" + faker.internet().domainName());
 			u.setUsername(firstName .toLowerCase() + lastName.toLowerCase().charAt(0));
-			u.setIsVerified(faker.bool().bool());
+			u.setIsVerified(faker.random().nextInt(100) < 75);
 			u.setPassword(new BCryptPasswordEncoder().encode(faker.internet().password(8, 32)));
 
 			log.info("Created new mock user: {}", u);

@@ -17,6 +17,7 @@ import java.util.UUID;
 @Repository
 public interface ReservationRepository extends JpaRepository<ReservationEntity, Long>,
                                                JpaSpecificationExecutor<Reservation> {
+	int countByStartTimeLessThanAndEndTimeGreaterThan(LocalDateTime end, LocalDateTime start);
 	Page<ReservationEntity> findByReservedByEqualsIgnoreCase(String reservedBy, Pageable pageable);
 	Set<ReservationEntity> findByStartTimeLessThanAndEndTimeGreaterThan(LocalDateTime end, LocalDateTime start);
 	Set<ReservationEntity> findByStartTimeLessThanAndEndTimeGreaterThanAndStatus(LocalDateTime end, LocalDateTime start, ReservationStatus status);

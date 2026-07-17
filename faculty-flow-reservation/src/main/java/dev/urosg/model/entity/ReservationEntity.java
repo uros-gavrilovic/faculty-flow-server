@@ -1,5 +1,6 @@
 package dev.urosg.model.entity;
 
+import dev.urosg.model.enumeration.EventType;
 import dev.urosg.model.enumeration.ReservationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -38,6 +39,10 @@ public class ReservationEntity {
 	String reservedBy;
 
 	String reviewedBy;
+
+	@Enumerated(EnumType.STRING)
+	@JdbcTypeCode(SqlTypes.NAMED_ENUM)
+	EventType eventType;
 
 	@Enumerated(EnumType.STRING)
 	@JdbcTypeCode(SqlTypes.NAMED_ENUM)

@@ -1,7 +1,4 @@
-env.properties
-./faculty-flow-room/src/main/resources/env.properties
-./faculty-flow-user/src/main/resources/env.properties
-./faculty-flow-gateway/src/main/resources/env.properties
+**/env*.properties
 
 target/
 !.mvn/wrapper/maven-wrapper.jar

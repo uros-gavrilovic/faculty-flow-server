@@ -1,4 +1,5 @@
 CREATE TYPE reservation_status AS ENUM ('PENDING', 'CANCELED', 'ACCEPTED', 'REJECTED');
+CREATE TYPE event_type AS ENUM ('LECTURE', 'EXERCISE', 'LABORATORY', 'EXAM', 'CONSULTATION', 'OTHER');
 
 CREATE TABLE reservation (
     id BIGSERIAL PRIMARY KEY,
@@ -10,6 +11,7 @@ CREATE TABLE reservation (
     end_time TIMESTAMP NOT NULL,
     reserved_by VARCHAR(255) NOT NULL,
     reviewed_by VARCHAR(255),
+    event_type event_type NOT NULL,
     status reservation_status NOT NULL,
     note VARCHAR(255),
     comment VARCHAR(255)

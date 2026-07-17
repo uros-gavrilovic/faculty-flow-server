@@ -12,6 +12,7 @@ public class UserAdapter {
 			entity.getLastName(),
 			entity.getEmail(),
 			entity.getUsername(),
+			entity.getIsVerified(),
 			entity.getRoles()
 		);
 	}
