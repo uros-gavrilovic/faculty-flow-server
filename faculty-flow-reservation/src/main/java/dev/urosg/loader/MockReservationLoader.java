@@ -39,7 +39,8 @@ public class MockReservationLoader {
 			LocalDateTime thisFriday = LocalDateTime.now().with(DayOfWeek.FRIDAY);
 
 			int reservationsThisWeekCount = reservationRepository
-				.countByStartTimeLessThanAndEndTimeGreaterThan(thisMonday, thisFriday);
+				.countByStartTimeLessThanAndEndTimeGreaterThan(thisFriday, thisMonday);
+			log.info("Reservations this week: {}", reservationsThisWeekCount);
 			if (reservationsThisWeekCount == 0) {
 				loadReservations(10);
 			}
