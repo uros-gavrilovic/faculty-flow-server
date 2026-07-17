@@ -1,7 +1,7 @@
 package dev.urosg.kafka.producer;
 
 import dev.urosg.kafka.KafkaTopics;
-import dev.urosg.kafka.event.UserAccountVerificationRequestedEvent;
+import dev.urosg.model.event.UserAccountVerificationEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ public class UserEventProducer {
 
 	public void sendVerificationEvent(String email, String username, String url) {
 
-		UserAccountVerificationRequestedEvent event = new UserAccountVerificationRequestedEvent(email, username, url);
+		UserAccountVerificationEvent event = new UserAccountVerificationEvent(email, username, url);
 
 		kafkaTemplate.send(
 			KafkaTopics.USER_ACCOUNT_VERIFICATION,

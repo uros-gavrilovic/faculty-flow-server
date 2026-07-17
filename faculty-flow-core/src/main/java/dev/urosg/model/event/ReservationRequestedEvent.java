@@ -1,9 +1,11 @@
-package dev.urosg.kafka.event;
+package dev.urosg.model.event;
 
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.UUID;
 
-public record RoomReservationRequestedEvent(
+public record ReservationRequestedEvent(
+	UUID uuid,
 	String name,
 	String room,
 	LocalDateTime startTime,

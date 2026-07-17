@@ -1,9 +1,9 @@
 package dev.urosg.kafka.producer;
 
 import dev.urosg.kafka.KafkaTopics;
-import dev.urosg.kafka.event.RoomReservationRequestedEvent;
-import dev.urosg.kafka.event.RoomReservationReviewedEvent;
 import dev.urosg.model.dto.Reservation;
+import dev.urosg.model.event.ReservationRequestedEvent;
+import dev.urosg.model.event.ReservationReviewedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,8 @@ public class ReservationEventProducer {
 		kafkaTemplate.send(
 			KafkaTopics.RESERVATION_REQUESTED,
 			reservation.room(),
-			new RoomReservationRequestedEvent(
+			new ReservationRequestedEvent(
+				reservation.uuid(),
 				reservation.name(),
 				reservation.room(),
 				reservation.startTime(),
@@ -35,7 +36,8 @@ public class ReservationEventProducer {
 		kafkaTemplate.send(
 			KafkaTopics.RESERVATION_REVIEWED,
 			reservation.room(),
-			new RoomReservationReviewedEvent(
+			new ReservationReviewedEvent(
+				reservation.uuid(),
 				reservation.name(),
 				reservation.room(),
 				reservation.startTime(),

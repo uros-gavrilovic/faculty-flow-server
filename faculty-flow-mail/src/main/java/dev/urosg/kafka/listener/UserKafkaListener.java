@@ -1,7 +1,7 @@
 package dev.urosg.kafka.listener;
 
 import dev.urosg.kafka.KafkaTopics;
-import dev.urosg.kafka.event.UserAccountVerificationRequestedEvent;
+import dev.urosg.model.event.UserAccountVerificationEvent;
 import dev.urosg.service.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -17,7 +17,7 @@ public class UserKafkaListener {
 		topics = KafkaTopics.USER_ACCOUNT_VERIFICATION,
 		groupId = "mail-service"
 	)
-	public void handle(UserAccountVerificationRequestedEvent event) {
+	public void handle(UserAccountVerificationEvent event) {
 		mailService.sendNewAccountMail(
 			event.email(),
 			event.username(),

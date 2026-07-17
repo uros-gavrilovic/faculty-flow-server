@@ -2,6 +2,8 @@ package dev.urosg.service.impl;
 
 import dev.urosg.model.MailType;
 import dev.urosg.model.PlaceholderConstant;
+import dev.urosg.model.event.ReservationRequestedEvent;
+import dev.urosg.model.event.ReservationReviewedEvent;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +27,7 @@ public class MailServiceImpl implements MailService {
 
 	@Value("${faculty-flow.service.front-end.url}") private String frontEndUrl;
 
-	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
 
 	public MailServiceImpl(
 		JavaMailSender mailSender,
@@ -46,35 +48,33 @@ public class MailServiceImpl implements MailService {
 	}
 
 	@Override
-	public void sendReservationRequestedMail(
-		String to, String name, String room, LocalDateTime startTime, LocalDateTime endTime, String reservedBy, String note
-	) {
+	public void sendReservationRequestedMail(String to, ReservationRequestedEvent event) {
 		Context context = new Context();
-		context.setVariable(PlaceholderConstant.NAME, name);
-		context.setVariable(PlaceholderConstant.ROOM, room);
-		context.setVariable(PlaceholderConstant.START_TIME, startTime.format(formatter));
-		context.setVariable(PlaceholderConstant.END_TIME, endTime.format(formatter));
-		context.setVariable(PlaceholderConstant.RESERVED_BY, reservedBy);
-		context.setVariable(PlaceholderConstant.NOTE, note);
-		context.setVariable(PlaceholderConstant.LINK,frontEndUrl + "/reservations/");
+
+		context.setVariable(PlaceholderConstant.NAME, event.name());
+		context.setVariable(PlaceholderConstant.ROOM, event.room());
+		context.setVariable(PlaceholderConstant.START_TIME, event.startTime().format(formatter));
+		context.setVariable(PlaceholderConstant.END_TIME, event.endTime().format(formatter));
+		context.setVariable(PlaceholderConstant.RESERVED_BY, event.reservedBy());
+		context.setVariable(PlaceholderConstant.NOTE, event.note());
+		context.setVariable(PlaceholderConstant.LINK,frontEndUrl + "/reservations?uuid=" + event.uuid());
 
 		sendMail(to, context, MailType.RESERVATION_REQUESTED);
 		log.info("Reservation requested e-mail sent to '{}'", to);
 	}
 
 	@Override
-	public void sendReservationReviewedMail(
-		String to, String name, String room, LocalDateTime startTime, LocalDateTime endTime, String reviewedBy, String status, String comment
-	) {
+	public void sendReservationReviewedMail(String to, ReservationReviewedEvent event) {
 		Context context = new Context();
-		context.setVariable(PlaceholderConstant.NAME, name);
-		context.setVariable(PlaceholderConstant.ROOM, room);
-		context.setVariable(PlaceholderConstant.START_TIME, startTime.format(formatter));
-		context.setVariable(PlaceholderConstant.END_TIME, endTime.format(formatter));
-		context.setVariable(PlaceholderConstant.REVIEWED_BY, reviewedBy);
-		context.setVariable(PlaceholderConstant.STATUS, status);
-		context.setVariable(PlaceholderConstant.COMMENT, comment);
-		context.setVariable(PlaceholderConstant.LINK,frontEndUrl + "/reservations/");
+
+		context.setVariable(PlaceholderConstant.NAME, event.name());
+		context.setVariable(PlaceholderConstant.ROOM, event.room());
+		context.setVariable(PlaceholderConstant.START_TIME, event.startTime().format(formatter));
+		context.setVariable(PlaceholderConstant.END_TIME, event.endTime().format(formatter));
+		context.setVariable(PlaceholderConstant.REVIEWED_BY, event.reviewedBy());
+		context.setVariable(PlaceholderConstant.STATUS, event.status());
+		context.setVariable(PlaceholderConstant.COMMENT, event.comment());
+		context.setVariable(PlaceholderConstant.LINK,frontEndUrl + "/reservations?uuid=" + event.uuid());
 
 		sendMail(to, context, MailType.RESERVATION_REVIEWED);
 		log.info("Reservation reviewed e-mail sent to '{}'", to);
