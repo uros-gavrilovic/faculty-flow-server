@@ -5,6 +5,7 @@ import dev.urosg.model.PlaceholderConstant;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -21,6 +22,8 @@ public class MailServiceImpl implements MailService {
 
 	private final JavaMailSender mailSender;
 	private final SpringTemplateEngine templateEngine;
+
+	@Value("${faculty-flow.service.front-end.url}") private String frontEndUrl;
 
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
@@ -53,6 +56,7 @@ public class MailServiceImpl implements MailService {
 		context.setVariable(PlaceholderConstant.END_TIME, endTime.format(formatter));
 		context.setVariable(PlaceholderConstant.RESERVED_BY, reservedBy);
 		context.setVariable(PlaceholderConstant.NOTE, note);
+		context.setVariable(PlaceholderConstant.LINK,frontEndUrl + "/reservations/");
 
 		sendMail(to, context, MailType.RESERVATION_REQUESTED);
 		log.info("Reservation requested e-mail sent to '{}'", to);
@@ -70,6 +74,7 @@ public class MailServiceImpl implements MailService {
 		context.setVariable(PlaceholderConstant.REVIEWED_BY, reviewedBy);
 		context.setVariable(PlaceholderConstant.STATUS, status);
 		context.setVariable(PlaceholderConstant.COMMENT, comment);
+		context.setVariable(PlaceholderConstant.LINK,frontEndUrl + "/reservations/");
 
 		sendMail(to, context, MailType.RESERVATION_REVIEWED);
 		log.info("Reservation reviewed e-mail sent to '{}'", to);

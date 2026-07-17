@@ -15,4 +15,5 @@ public class PlaceholderConstant {
 	public static final String REVIEWED_BY = "reviewedBy";
 	public static final String STATUS = "status";
 	public static final String COMMENT = "comment";
+	public static final String LINK = "link";
 }

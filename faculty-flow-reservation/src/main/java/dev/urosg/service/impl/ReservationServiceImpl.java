@@ -36,6 +36,11 @@ public class ReservationServiceImpl implements ReservationService {
 	private final UserClient userClient;
 
 	@Override
+	public Reservation getReservation(UUID uuid) {
+		return ReservationAdapter.toDto(findByUuid(uuid));
+	}
+
+	@Override
 	public SearchResponse<Reservation> searchReservations(SearchRequest<ReservationFilter> request) {
 		Page<Reservation> page = reservationRepository.findAll(
 			ReservationSpecifications.toSpecification(request.filter()),
@@ -47,8 +52,7 @@ public class ReservationServiceImpl implements ReservationService {
 
 	@Override
 	public Reservation updateReservation(Reservation reservation) {
-		ReservationEntity reservationEntity = this.reservationRepository.findByUuid(reservation.uuid())
-			.orElseThrow(() -> new IllegalArgumentException("Reservation with UUID '" + reservation.uuid() + "' not found"));
+		ReservationEntity reservationEntity = findByUuid(reservation.uuid());
 
 		reservationEntity.setName(reservation.name());
 		reservationEntity.setRoom(reservation.room());
@@ -130,4 +134,10 @@ public class ReservationServiceImpl implements ReservationService {
 
 		return reservation;
 	}
+
+	private @NonNull ReservationEntity findByUuid(UUID uuid) {
+		return this.reservationRepository.findByUuid(uuid)
+			.orElseThrow(() -> new IllegalArgumentException("Reservation with UUID '" + uuid + "' not found"));
+	}
+
 }

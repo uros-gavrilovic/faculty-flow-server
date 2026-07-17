@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -15,6 +16,11 @@ import java.util.Set;
 public class ReservationController {
 
 	private final ReservationService reservationService;
+
+	@GetMapping
+	public Reservation getReservation(@RequestParam UUID uuid) {
+		return reservationService.getReservation(uuid);
+	}
 
 	@PostMapping("/search")
 	public SearchResponse<Reservation> searchReservations(@RequestBody SearchRequest<ReservationFilter> searchRequest) {

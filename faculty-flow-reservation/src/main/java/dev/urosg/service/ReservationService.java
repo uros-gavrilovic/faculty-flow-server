@@ -4,8 +4,10 @@ import dev.urosg.model.dto.*;
 
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.UUID;
 
 public interface ReservationService {
+	Reservation getReservation(UUID uuid);
 	SearchResponse<Reservation> searchReservations(SearchRequest<ReservationFilter> searchRequest);
 	Reservation updateReservation(Reservation reservation);
 	Reservation requestReservation(ReservationRequest request);
