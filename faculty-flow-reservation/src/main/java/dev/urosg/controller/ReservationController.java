@@ -21,24 +21,9 @@ public class ReservationController {
 		return reservationService.searchReservations(searchRequest);
 	}
 
-	@GetMapping
-	Set<Reservation> getReservations(@RequestParam LocalDateTime start, @RequestParam LocalDateTime end) {
-		return reservationService.getReservations(start, end);
-	}
-
-	@GetMapping("/{roomCode}")
-	Set<Reservation> getReservations(@PathVariable String roomCode, @RequestParam LocalDateTime start, @RequestParam LocalDateTime end) {
-		return reservationService.getReservations(roomCode, start, end);
-	}
-
 	@PutMapping
 	Reservation updateReservation(@RequestBody Reservation reservation) {
 		return reservationService.updateReservation(reservation);
-	}
-
-	@GetMapping("/request")
-	Set<Reservation> getReservationRequests(@RequestParam LocalDateTime start, @RequestParam LocalDateTime end) {
-		return reservationService.getReservationRequests(start, end);
 	}
 
 	@PostMapping("/request")

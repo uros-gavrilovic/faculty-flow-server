@@ -46,42 +46,13 @@ public class ReservationServiceImpl implements ReservationService {
 	}
 
 	@Override
-	public Set<Reservation> getReservations(LocalDateTime start, LocalDateTime end) {
-		validateArguments(start, end);
-
-		Set<ReservationEntity> reservationEntities = reservationRepository
-			.findByStartTimeLessThanAndEndTimeGreaterThan(end, start);
-
-		return mapToSet(reservationEntities);
-	}
-
-	@Override
-	public Set<Reservation> getReservations(String roomCode, LocalDateTime start, LocalDateTime end) {
-		validateArguments(start, end);
-
-		Set<ReservationEntity> reservationEntities = reservationRepository
-			.findByStartTimeLessThanAndEndTimeGreaterThanAndRoom(end, start, roomCode);
-
-		return mapToSet(reservationEntities);
-	}
-
-	@Override
-	public Set<Reservation> getReservationRequests(LocalDateTime start, LocalDateTime end) {
-		validateArguments(start, end);
-
-		Set<ReservationEntity> reservationRequestEntities =
-			reservationRepository.findByStartTimeLessThanAndEndTimeGreaterThanAndStatus(end, start, ReservationStatus.PENDING);
-
-		return mapToSet(reservationRequestEntities);
-	}
-
-	@Override
 	public Reservation updateReservation(Reservation reservation) {
 		ReservationEntity reservationEntity = this.reservationRepository.findByUuid(reservation.uuid())
 			.orElseThrow(() -> new IllegalArgumentException("Reservation with UUID '" + reservation.uuid() + "' not found"));
 
 		reservationEntity.setName(reservation.name());
 		reservationEntity.setRoom(reservation.room());
+		reservationEntity.setEventType(reservation.eventType());
 		reservationEntity.setStartTime(reservation.startTime());
 		reservationEntity.setEndTime(reservation.endTime());
 		reservationEntity.setReservedBy(reservation.reservedBy());
@@ -109,6 +80,7 @@ public class ReservationServiceImpl implements ReservationService {
 				.uuid(UUID.randomUUID())
 				.name(request.name())
 				.room(request.roomCode())
+				.eventType(request.eventType())
 				.startTime(request.startTime())
 				.endTime(request.endTime())
 				.reservedBy(request.reservedBy() == null ? AuthenticationUtils.getCurrentUserUsername(requestContext) : request.reservedBy())
@@ -157,16 +129,5 @@ public class ReservationServiceImpl implements ReservationService {
 		reservationEventProducer.sendReservationReviewedEvent(user.email(), reservation);
 
 		return reservation;
-	}
-
-	private static void validateArguments(LocalDateTime start, LocalDateTime end) {
-		if (start == null || end == null) throw new IllegalArgumentException("Start and end date must not be null");
-		if (start.isAfter(end)) throw new IllegalArgumentException("Start date must be before end date");
-	}
-
-	private static @NonNull Set<Reservation> mapToSet(Set<ReservationEntity> reservationEntities) {
-		return reservationEntities.stream()
-			.map(ReservationAdapter::toDto)
-			.collect(java.util.stream.Collectors.toSet());
 	}
 }
