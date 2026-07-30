@@ -27,7 +27,7 @@ public class RoomController {
 	}
 
 	@PostMapping("/search")
-	public SearchResponse<Room> searchRooms(SearchRequest<RoomFilter> searchRequest) {
+	public SearchResponse<Room> searchRooms(@RequestBody SearchRequest<RoomFilter> searchRequest) {
 		return roomService.searchRooms(searchRequest);
 	}
 
