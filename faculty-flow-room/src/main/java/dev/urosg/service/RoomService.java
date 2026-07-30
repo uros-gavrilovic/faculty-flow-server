@@ -10,6 +10,7 @@ import java.util.UUID;
 public interface RoomService {
 	List<Room> getAllRooms();
 	SearchResponse<Room> searchRooms(SearchRequest<RoomFilter> request);
+	Room getRoom(UUID uuid);
 	Room createRoom(Room room);
 	Room updateRoom(Room room);
 	void deleteRoom(UUID uuid);

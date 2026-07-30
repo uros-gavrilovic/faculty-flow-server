@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.UUID;
 
@@ -37,6 +39,7 @@ public class RoomEntity {
 	private String code;
 
 	@Enumerated(EnumType.STRING)
+	@JdbcTypeCode(SqlTypes.NAMED_ENUM)
 	@Column(name = "type")
 	private RoomType type;
 
@@ -44,6 +47,7 @@ public class RoomEntity {
 	private Integer floor;
 
 	@Enumerated(EnumType.STRING)
+	@JdbcTypeCode(SqlTypes.NAMED_ENUM)
 	@Column(name = "building")
 	private Building building;
 

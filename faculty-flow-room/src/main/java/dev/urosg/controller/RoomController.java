@@ -22,6 +22,11 @@ public class RoomController {
 	}
 
 	@GetMapping
+	public Room getRoom(@RequestParam UUID uuid) {
+		return roomService.getRoom(uuid);
+	}
+
+	@GetMapping("/all")
 	public List<Room> getAllRooms() {
 		return roomService.getAllRooms();
 	}

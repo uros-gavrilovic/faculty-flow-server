@@ -49,8 +49,15 @@ public class RoomServiceImpl implements RoomService {
 	}
 
 	@Override
+	public Room getRoom(UUID uuid) {
+		return RoomAdapter.toDto(findByUuid(uuid));
+	}
+
+	@Override
 	public Room createRoom(Room room) {
 		RoomEntity entity = RoomAdapter.toEntity(room);
+
+		entity.setUuid(UUID.randomUUID());
 
 		RoomEntity createdEntity = roomRepository.saveAndFlush(entity);
 		log.info("Created room '{}' ({})", createdEntity.getName(), createdEntity.getUuid());
