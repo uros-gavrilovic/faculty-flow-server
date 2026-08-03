@@ -10,6 +10,7 @@ import dev.urosg.repository.RoomRepository;
 import dev.urosg.repository.specification.RoomSpecifications;
 import dev.urosg.service.RoomService;
 import dev.urosg.util.SearchUtil;
+import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 
 @Slf4j
+@Transactional
 @Service
 public class RoomServiceImpl implements RoomService {
 
@@ -85,7 +87,10 @@ public class RoomServiceImpl implements RoomService {
 
 	@Override
 	public void deleteRoom(UUID uuid) {
-		roomRepository.deleteById(Long.parseLong(uuid.toString()));
+		RoomEntity roomToDelete = findByUuid(uuid);
+		log.info("Deleting room '{}' ({})", roomToDelete.getName(), roomToDelete.getUuid());
+
+		roomRepository.deleteByUuid(uuid);
 	}
 
 	private @NonNull RoomEntity findByUuid(UUID uuid) {

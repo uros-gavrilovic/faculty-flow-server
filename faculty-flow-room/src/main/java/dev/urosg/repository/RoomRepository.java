@@ -12,4 +12,5 @@ import java.util.UUID;
 public interface RoomRepository extends JpaRepository<RoomEntity, Long>,
                                         JpaSpecificationExecutor<Room> {
 	Optional<RoomEntity> findByUuid(UUID uuid);
+	void deleteByUuid(UUID uuid);
 }
