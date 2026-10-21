@@ -1,41 +1,71 @@
 #!/bin/bash
 # run.sh
-# Check parameter
+
+set -e
+
 COMMAND=${1:-serve}
 
-# If first arg looks like an env (dev|prod|staging...), treat it as: serve + that env
-if [[ "$COMMAND" == "dev" || "$COMMAND" == "prod" || "$COMMAND" == "staging" ]]; then
+if [[ "$COMMAND" == "dev" || "$COMMAND" == "prod" ]]; then
   ENV=$COMMAND
   COMMAND="serve"
 else
-  # Second arg can be explicit env: ff serve dev
- ENV=${2:-dev}
- #ENV=${2:-prod}
+  ENV=${2:-dev}
+fi
+
+if [[ "$ENV" != "dev" && "$ENV" != "prod" ]]; then
+  echo "Unknown environment: $ENV"
+  echo "Available environments: dev, prod"
+  exit 1
 fi
 
 case "$COMMAND" in
   purge)
     echo "Purging containers and volumes..."
     cd docker || exit 1
-    docker compose down -v
+    docker compose -f docker-compose.$ENV.yaml down -v
     ;;
+
   serve)
-    echo "Building and serving with env=$ENV..."
-    mvn clean install -D skipTests || exit 1
+    echo "Serving with env=$ENV..."
+
+    if [[ "$ENV" == "dev" ]]; then
+      mvn clean install -DskipTests || exit 1
+    fi
+
     cd docker || exit 1
-    docker ps -a --format '{{.Names}}' | grep '^faculty-flow-' | grep -v 'postgres' | xargs -r docker rm -f
-    SPRING_PROFILES_ACTIVE=$ENV docker compose up --build
+
+    docker ps -a --format '{{.Names}}' |
+      grep '^faculty-flow-' |
+      grep -v 'postgres' |
+      xargs -r docker rm -f
+
+    if [[ "$ENV" == "prod" ]]; then
+      docker compose -f docker-compose.$ENV.yaml pull
+      docker compose -f docker-compose.$ENV.yaml up
+    else
+      SPRING_PROFILES_ACTIVE=$ENV \
+        docker compose -f docker-compose.$ENV.yaml up --build
+    fi
     ;;
+
   build)
-    echo "Building only..."
-    mvn clean install -D skipTests || exit 1
-    cd docker || exit 1
-    docker compose build
+    echo "Building with env=$ENV..."
+
+    if [[ "$ENV" == "dev" ]]; then
+      mvn clean install -DskipTests || exit 1
+      cd docker || exit 1
+      docker compose -f docker-compose.$ENV.yaml build
+    else
+      echo "Production uses published images; nothing to build."
+      exit 0
+    fi
     ;;
+
   *)
     echo "Unknown command: $COMMAND"
-    echo "Usage: $0 [serve|build|purge] [dev|prod|staging]"
-    echo "       $0 [dev|prod|staging]          (shorthand for serve)"
+    echo "Usage: $0 [serve|build|purge] [dev|prod]"
+    echo "       $0 [dev|prod] (shorthand for serve)"
     exit 1
     ;;
 esac
+```

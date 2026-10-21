@@ -1,0 +1,110 @@
+services:
+  postgres:
+    image: ghcr.io/uros-gavrilovic/faculty-flow-postgres:latest
+    container_name: faculty-flow-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_ADMIN_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_ADMIN_USER}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  kafka:
+    image: apache/kafka:3.7.0
+    container_name: faculty-flow-kafka
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_LOG4J_LOGGERS: "kafka=WARN,kafka.server=WARN,org.apache.kafka=WARN"
+      KAFKA_LOG4J_ROOT_LOGLEVEL: "WARN"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: faculty-flow-mailpit
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    ports:
+      - "8025:8025"
+
+  faculty-flow-gateway:
+    image: ghcr.io/uros-gavrilovic/faculty-flow-gateway:latest
+    container_name: faculty-flow-gateway
+    env_file:
+      - ./prod.env
+    environment:
+      SPRING_PROFILES_ACTIVE: ${ENV}
+    ports:
+      - "9000:8080"
+
+  faculty-flow-user:
+    image: ghcr.io/uros-gavrilovic/faculty-flow-user:latest
+    container_name: faculty-flow-user
+    env_file:
+      - ./prod.env
+    environment:
+      DB_URL: ${USER_DB_URL}
+      DB_USERNAME: ${USER_DB_USERNAME}
+      DB_PASSWORD: ${USER_DB_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  faculty-flow-reservation:
+    image: ghcr.io/uros-gavrilovic/faculty-flow-reservation:latest
+    container_name: faculty-flow-reservation
+    env_file:
+      - ./prod.env
+    environment:
+      DB_URL: ${RESERVATION_DB_URL}
+      DB_USERNAME: ${RESERVATION_DB_USERNAME}
+      DB_PASSWORD: ${RESERVATION_DB_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  faculty-flow-room:
+    image: ghcr.io/uros-gavrilovic/faculty-flow-room:latest
+    container_name: faculty-flow-room
+    env_file:
+      - ./prod.env
+    environment:
+      DB_URL: ${ROOM_DB_URL}
+      DB_USERNAME: ${ROOM_DB_USERNAME}
+      DB_PASSWORD: ${ROOM_DB_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  faculty-flow-mail:
+    image: ghcr.io/uros-gavrilovic/faculty-flow-mail:latest
+    container_name: faculty-flow-mail
+    env_file:
+      - ./prod.env
+    depends_on:
+      - mailpit
+      - kafka
+
+  faculty-flow-frontend:
+    image: ghcr.io/uros-gavrilovic/faculty-flow-frontend:latest
+    container_name: faculty-flow-frontend
+    ports:
+      - "4200:80"
+
+volumes:
+  pg_data:

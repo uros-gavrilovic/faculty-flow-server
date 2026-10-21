@@ -1,4 +1,5 @@
 **/env*.properties
+**/*.env
 
 target/
 !.mvn/wrapper/maven-wrapper.jar
