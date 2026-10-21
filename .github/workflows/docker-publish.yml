@@ -22,10 +22,8 @@ jobs:
           java-version: '25'
           cache: maven
 
-      # Builds only this module (plus any shared modules it depends on via -am)
       - name: Build jar
         run: mvn -B -ntp -pl faculty-flow-${{ matrix.service }} -am package
-        # Add -DskipTests if your tests need Postgres/Kafka
 
       - uses: docker/setup-buildx-action@v3
 
@@ -34,19 +32,9 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Image tags
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/faculty-flow-${{ matrix.service }}
-          tags: |
-            type=raw,value=latest
-            type=sha
-
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: faculty-flow-${{ matrix.service }}
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/faculty-flow-${{ matrix.service }}:latest
