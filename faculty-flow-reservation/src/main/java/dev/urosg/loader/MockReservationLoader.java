@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -18,6 +20,8 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
+@Profile("dev")
+@ConditionalOnProperty(name = "dataloader.init-test-data", havingValue = "true")
 public class MockReservationLoader {
 
 	@Value("${dataloader.init-test-data:false}")
@@ -40,19 +44,18 @@ public class MockReservationLoader {
 
 			int reservationsThisWeekCount = reservationRepository
 				.countByStartTimeLessThanAndEndTimeGreaterThan(thisFriday, thisMonday);
+
 			log.info("Reservations this week: {}", reservationsThisWeekCount);
-			if (reservationsThisWeekCount == 0) {
-				loadReservations(10);
-			}
+
+			if (reservationsThisWeekCount == 0) loadReservations(10);
 		}
 	}
 
 	private void loadReservations(int counter) {
-
 		List<EventType> eventTypes = List.of(EventType.values());
 		List<ReservationStatus> statuses = List.of(ReservationStatus.values());
 		List<String> rooms = List.of("06", "07", "08", "09", "AM1", "AM2");
-		List<String> reservedBy = List.of("uros.gavrilovic", "andrea.tomas");
+		List<String> reservedBy = List.of("user1", "user2");
 		List<String> subjects = List.of(
 			"Algorithms",
 			"Data Structures",

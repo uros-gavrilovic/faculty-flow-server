@@ -9,7 +9,8 @@ if [[ "$COMMAND" == "dev" || "$COMMAND" == "prod" || "$COMMAND" == "staging" ]];
   COMMAND="serve"
 else
   # Second arg can be explicit env: ff serve dev
-  ENV=${2:-prod}
+ ENV=${2:-dev}
+ #ENV=${2:-prod}
 fi
 
 case "$COMMAND" in
