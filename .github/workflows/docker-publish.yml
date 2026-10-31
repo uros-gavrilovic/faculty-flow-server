@@ -28,8 +28,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: docker/
-          file: docker/Dockerfile.postgres
+          context: faculty-flow-postgres/
+          file: faculty-flow-postgres/Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/faculty-flow-postgres:latest
 
