@@ -22,7 +22,7 @@ public class RoomClient {
 
 	public Set<Room> getAllRooms() {
 		return restClient.get()
-			.uri(ROOM_URL)
+			.uri(ROOM_URL + "/all")
 			.header(HttpClientConstant.AUTHORIZATION, HttpClientConstant.BEARER + requestContext.getToken())
 			.retrieve()
 			.body(new ParameterizedTypeReference<>() {});

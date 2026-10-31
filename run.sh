@@ -40,14 +40,13 @@ case "$COMMAND" in
       xargs -r docker rm -f
 
     if [[ "$ENV" == "prod" ]]; then
-      docker compose -f docker-compose.$ENV.yaml pull
-      docker compose -f docker-compose.$ENV.yaml up
+      docker compose --env-file prod.env -f docker-compose.$ENV.yaml pull
+      docker compose --env-file prod.env -f docker-compose.$ENV.yaml up
     else
       SPRING_PROFILES_ACTIVE=$ENV \
         docker compose -f docker-compose.$ENV.yaml up --build
     fi
     ;;
-
   build)
     echo "Building with env=$ENV..."
 
