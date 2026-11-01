@@ -11,9 +11,9 @@ public record Reservation(
 	String room,
 	LocalDateTime startTime,
 	LocalDateTime endTime,
+	EventType eventType,
 	String reservedBy,
 	String reviewedBy,
-	EventType eventType,
 	ReservationStatus status,
 	String note,
 	String comment

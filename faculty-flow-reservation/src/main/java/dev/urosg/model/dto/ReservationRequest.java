@@ -6,11 +6,11 @@ import java.time.LocalDateTime;
 
 @Builder
 public record ReservationRequest(
-	String roomCode,
-	EventType eventType,
 	String name,
-	String reservedBy,
+	String roomCode,
 	LocalDateTime startTime,
 	LocalDateTime endTime,
+	EventType eventType,
+	String reservedBy,
 	String note
 ) { }

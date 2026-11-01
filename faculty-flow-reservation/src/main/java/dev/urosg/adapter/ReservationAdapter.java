@@ -11,9 +11,9 @@ public class ReservationAdapter {
 			entity.getRoom(),
 			entity.getStartTime(),
 			entity.getEndTime(),
+			entity.getEventType(),
 			entity.getReservedBy(),
 			entity.getReviewedBy(),
-			entity.getEventType(),
 			entity.getStatus(),
 			entity.getNote(),
 			entity.getComment()
