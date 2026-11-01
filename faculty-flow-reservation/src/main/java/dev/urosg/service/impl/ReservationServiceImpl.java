@@ -17,8 +17,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
@@ -77,7 +79,12 @@ public class ReservationServiceImpl implements ReservationService {
 		rooms.stream()
 			.filter(r -> r.code().equalsIgnoreCase(request.roomCode()))
 			.findFirst()
-			.orElseThrow(() -> new IllegalArgumentException("Room with code '" + request.roomCode() + "' not found"));
+			.orElseThrow(() ->
+				new ResponseStatusException(
+					HttpStatus.NOT_FOUND,
+					"Room with code '" + request.roomCode() + "' not found"
+				)
+			);
 
 		ReservationEntity newReservation = ReservationEntity
 			.builder()
@@ -111,7 +118,7 @@ public class ReservationServiceImpl implements ReservationService {
 	@Override
 	public Reservation reviewReservation(ReservationReview review) {
 		ReservationEntity reservationEntity = this.reservationRepository.findByUuid(review.uuid()).orElseThrow(
-			() -> new IllegalArgumentException("Reservation with UUID '" + review.uuid() + "' not found")
+			() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reservation with UUID '" + review.uuid() + "' not found")
 		);
 
 		reservationEntity.setStatus(review.status());
@@ -128,7 +135,7 @@ public class ReservationServiceImpl implements ReservationService {
 		log.info("Reservation review: {}", reservation);
 
 		User user = userClient.getUserByUsername(reservation.reservedBy());
-		if (user == null) throw new IllegalArgumentException("User with username '" + reservation.reservedBy() + "' not found");
+		if (user == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with username '" + reservation.reservedBy() + "' not found");
 
 		reservationEventProducer.sendReservationReviewedEvent(user.email(), reservation);
 
@@ -137,7 +144,7 @@ public class ReservationServiceImpl implements ReservationService {
 
 	private @NonNull ReservationEntity findByUuid(UUID uuid) {
 		return this.reservationRepository.findByUuid(uuid)
-			.orElseThrow(() -> new IllegalArgumentException("Reservation with UUID '" + uuid + "' not found"));
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reservation with UUID '" + uuid + "' not found"));
 	}
 
 }

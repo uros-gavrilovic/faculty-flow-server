@@ -13,7 +13,9 @@ import dev.urosg.util.SearchUtil;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
@@ -95,7 +97,7 @@ public class RoomServiceImpl implements RoomService {
 
 	private @NonNull RoomEntity findByUuid(UUID uuid) {
 		return roomRepository.findByUuid(uuid)
-			.orElseThrow(() -> new IllegalArgumentException("Room with UUID '" + uuid + "' not found"));
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room with UUID '" + uuid + "' not found"));
 	}
 
 }

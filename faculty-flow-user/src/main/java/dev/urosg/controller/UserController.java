@@ -5,7 +5,9 @@ import dev.urosg.model.dto.User;
 import dev.urosg.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Set;
 import java.util.UUID;
@@ -26,7 +28,7 @@ public class UserController {
 		if (uuid != null) return userService.fetchUser(uuid);
 		if (username != null) return userService.fetchByUsername(username);
 
-		throw new IllegalArgumentException("Provide uuid or username");
+		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Provide UUID or username");
 	}
 
 	@GetMapping("/search")

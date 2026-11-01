@@ -13,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Set;
 import java.util.UUID;
@@ -34,7 +36,7 @@ public class UserServiceImpl implements UserService {
 	public User fetchByUsername(String username) {
 		return userRepository.findByUsername(username)
 			.map(UserAdapter::toDto)
-			.orElseThrow(() -> new IllegalArgumentException("User with username '" + username + "' not found"));
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with username '" + username + "' not found"));
 	}
 
 	@Override
@@ -76,6 +78,6 @@ public class UserServiceImpl implements UserService {
 
 	private UserEntity findByUUID(UUID uuid) {
 		return userRepository.findByUuid(uuid)
-			.orElseThrow(() -> new IllegalArgumentException("User with UUID '" + uuid + "' not found"));
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with UUID '" + uuid + "' not found"));
 	}
 }

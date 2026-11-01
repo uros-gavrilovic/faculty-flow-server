@@ -8,6 +8,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import javax.crypto.SecretKey;
 import java.util.List;
 
@@ -21,7 +23,7 @@ public class AuthenticationUtils {
 
 	public static AuthenticatedUser getAuthentication(RequestContext requestContext) {
 		AuthenticatedUser authenticatedUser = fromToken(requestContext.getToken());
-		if (authenticatedUser == null) throw new IllegalStateException("User not authenticated");
+		if (authenticatedUser == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
 
 		return authenticatedUser;
 	}
