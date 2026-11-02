@@ -22,7 +22,7 @@ case "$COMMAND" in
   purge)
     echo "Purging containers and volumes..."
     cd docker || exit 1
-    docker compose -f docker-compose.$ENV.yaml down -v
+    SPRING_PROFILES_ACTIVE=$ENV docker compose -f docker-compose.$ENV.yaml down -v
     ;;
 
   serve)
@@ -53,7 +53,7 @@ case "$COMMAND" in
     if [[ "$ENV" == "dev" ]]; then
       mvn clean install -DskipTests || exit 1
       cd docker || exit 1
-      docker compose -f docker-compose.$ENV.yaml build
+      SPRING_PROFILES_ACTIVE=$ENV docker compose -f docker-compose.$ENV.yaml build
     else
       echo "Production uses published images; nothing to build."
       exit 0
@@ -67,4 +67,3 @@ case "$COMMAND" in
     exit 1
     ;;
 esac
-```

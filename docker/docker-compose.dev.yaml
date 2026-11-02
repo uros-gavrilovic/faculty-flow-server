@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: admin
     volumes:
       - pg_data:/var/lib/postgresql/data
-      - ./resources/database:/docker-entrypoint-initdb.d
+      - ../faculty-flow-postgres/resources/database:/docker-entrypoint-initdb.d
     ports:
       - "8080:5432"
     healthcheck:
