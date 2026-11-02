@@ -29,15 +29,6 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
 
-  mailpit:
-    image: axllent/mailpit
-    container_name: faculty-flow-mailpit
-    environment:
-      MP_SMTP_AUTH_ACCEPT_ANY: 1
-      MP_SMTP_AUTH_ALLOW_INSECURE: 1
-    ports:
-      - "8025:8025"
-
   faculty-flow-gateway:
     image: ghcr.io/uros-gavrilovic/faculty-flow-gateway:latest
     container_name: faculty-flow-gateway
@@ -97,7 +88,6 @@ services:
     env_file:
       - ./prod.env
     depends_on:
-      - mailpit
       - kafka
 
   faculty-flow-frontend:
