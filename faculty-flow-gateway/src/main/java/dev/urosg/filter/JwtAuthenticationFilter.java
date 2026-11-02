@@ -42,7 +42,8 @@ public class JwtAuthenticationFilter implements WebFilter {
 	public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 		String path = exchange.getRequest().getURI().getPath();
 
-		if (PUBLIC_PATHS.stream().anyMatch(path::startsWith)) return chain.filter(exchange);
+		boolean isPublicPath = PUBLIC_PATHS.stream().anyMatch(path::startsWith);
+		if (isPublicPath) return chain.filter(exchange);
 
 		String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 

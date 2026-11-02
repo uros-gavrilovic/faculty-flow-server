@@ -1,7 +1,9 @@
 package dev.urosg.controller;
 
+import dev.urosg.annotation.HasRole;
 import dev.urosg.model.dto.SearchResponse;
 import dev.urosg.model.dto.User;
+import dev.urosg.model.enumeration.UserRole;
 import dev.urosg.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +44,7 @@ public class UserController {
 	}
 
 	@PutMapping
+	@HasRole(UserRole.ADMINISTRATOR)
 	public User updateUser(@RequestBody User user) {
 		return userService.updateUser(user);
 	}

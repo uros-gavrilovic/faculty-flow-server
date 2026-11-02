@@ -9,7 +9,7 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 
 @Configuration
-public class SecurityConfig {
+public class GatewaySecurityConfig {
 
 	@Bean
 	public SecurityWebFilterChain securityWebFilterChain(

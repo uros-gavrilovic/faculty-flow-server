@@ -19,10 +19,10 @@ public class AuthForwardServiceImpl implements AuthForwardService {
 		this.webClient = webClient;
 	}
 
-	public Mono<Boolean> isTokenValid(String token) {
+	public Mono<Boolean> isTokenValid(String authHeader) {
 		return webClient.post()
 			.uri(USER_URL + "/api/auth/validate")
-			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+			.header(HttpHeaders.AUTHORIZATION, authHeader)
 			.retrieve()
 			.toBodilessEntity()
 			.map(response -> response.getStatusCode().is2xxSuccessful())

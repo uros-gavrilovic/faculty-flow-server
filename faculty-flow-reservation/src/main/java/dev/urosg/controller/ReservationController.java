@@ -1,12 +1,12 @@
 package dev.urosg.controller;
 
+import dev.urosg.annotation.HasRole;
 import dev.urosg.model.dto.*;
+import dev.urosg.model.enumeration.UserRole;
 import dev.urosg.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import java.time.LocalDateTime;
-import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -28,17 +28,18 @@ public class ReservationController {
 	}
 
 	@PutMapping
-	Reservation updateReservation(@RequestBody Reservation reservation) {
+	public Reservation updateReservation(@RequestBody Reservation reservation) {
 		return reservationService.updateReservation(reservation);
 	}
 
 	@PostMapping("/request")
-	Reservation requestReservation(@RequestBody ReservationRequest request) {
+	public Reservation requestReservation(@RequestBody ReservationRequest request) {
 		return reservationService.requestReservation(request);
 	}
 
+	@HasRole(UserRole.ADMINISTRATOR)
 	@PostMapping("/review")
-	Reservation reviewReservation(@RequestBody ReservationReview review) {
+	public Reservation reviewReservation(@RequestBody ReservationReview review) {
 		return reservationService.reviewReservation(review);
 	}
 }
