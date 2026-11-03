@@ -19,3 +19,6 @@ CREATE TABLE reservation (
 
 ALTER TABLE reservation
     ADD CONSTRAINT valid_time CHECK (end_time > start_time);
+
+ALTER TABLE reservation
+    ADD CONSTRAINT max_duration CHECK (end_time - start_time <= INTERVAL '8 hours');
