@@ -30,8 +30,8 @@ public class AuthServiceImpl implements AuthService {
 	private final JwtService jwtService;
 	private final PasswordEncoder passwordEncoder;
 
-	@Value("${app.public-base-url}")
-	private String baseUrl;
+	@Value("${faculty-flow.service.front-end.url}")
+	private String frontEndUrl;
 
 	public AuthServiceImpl(
 		UserRepository userRepository,
@@ -80,7 +80,7 @@ public class AuthServiceImpl implements AuthService {
 		userEventProducer.sendVerificationEvent(
 			savedUserEntity.getEmail(),
 			savedUserEntity.getUsername(),
-			baseUrl + "/api/auth/verify-account?token=" + savedUserEntity.getUuid()
+			frontEndUrl + "/verify-account?token=" + savedUserEntity.getUuid()
 		);
 
 		return UserAdapter.toDto(savedUserEntity);
