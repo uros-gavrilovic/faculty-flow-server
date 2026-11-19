@@ -9,11 +9,14 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+@Builder(toBuilder = true)
+@AllArgsConstructor // For @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // For JPA and Hibernate
 @Data
 @Entity
 @Table(name = "user_account")
@@ -59,5 +62,6 @@ public class UserEntity {
 	@JdbcTypeCode(SqlTypes.NAMED_ENUM) // Use user-defined enum type
 	private Set<UserRole> roles;
 
+	@Builder.Default
 	private Boolean isVerified = false;
 }

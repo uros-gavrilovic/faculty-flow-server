@@ -4,6 +4,7 @@ import dev.urosg.annotation.HasRole;
 import dev.urosg.model.dto.*;
 import dev.urosg.model.enumeration.UserRole;
 import dev.urosg.service.ReservationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +34,7 @@ public class ReservationController {
 	}
 
 	@PostMapping("/request")
-	public Reservation requestReservation(@RequestBody ReservationRequest request) {
+	public Reservation requestReservation(@Valid @RequestBody ReservationRequest request) {
 		return reservationService.requestReservation(request);
 	}
 

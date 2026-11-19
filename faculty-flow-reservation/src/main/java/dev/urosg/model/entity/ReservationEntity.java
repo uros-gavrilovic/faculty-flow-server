@@ -17,7 +17,7 @@ import java.util.UUID;
 @Entity
 @RequiredArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @Table(name = "reservation")
 public class ReservationEntity {
 
@@ -46,7 +46,8 @@ public class ReservationEntity {
 
 	@Enumerated(EnumType.STRING)
 	@JdbcTypeCode(SqlTypes.NAMED_ENUM)
-	ReservationStatus status;
+	@Builder.Default
+	ReservationStatus status = ReservationStatus.PENDING;
 
 	String note;
 

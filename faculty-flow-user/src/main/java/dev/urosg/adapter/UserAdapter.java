@@ -18,14 +18,12 @@ public class UserAdapter {
 	}
 
 	public static UserEntity from(RegisterAccountRequest request) {
-		UserEntity user = new UserEntity();
-
-		user.setUsername(request.username());
-		user.setPassword(request.password());
-		user.setEmail(request.email());
-		user.setFirstName(request.firstName());
-		user.setLastName(request.lastName());
-
-		return user;
+		return UserEntity.builder()
+			.username(request.username())
+			.password(request.password())
+			.email(request.email())
+			.firstName(request.firstName())
+			.lastName(request.lastName())
+			.build();
 	}
 }

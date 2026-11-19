@@ -52,16 +52,16 @@ public class MockUserLoader {
 	}
 
 	private void generateGenericUser(int index) {
-		UserEntity u = new UserEntity();
-
-		u.setUuid(UUID.randomUUID());
-		u.setFirstName("User");
-		u.setLastName(Integer.toString(index));
-		u.setUsername(checkConstraints(USERNAME_PATTERN, "user" + index, "username"));
-		u.setEmail(checkConstraints(EMAIL_PATTERN, "user" + index + "@example.com", "email"));
-		u.setPassword(checkConstraints(PASSWORD_PATTERN, passwordEncoder.encode("user" + index), "password"));
-		u.setRoles(Set.of(UserRole.USER));
-		u.setIsVerified(true);
+		UserEntity u = UserEntity.builder()
+			.uuid(UUID.randomUUID())
+			.firstName("User")
+			.lastName(Integer.toString(index))
+			.username(checkConstraints(USERNAME_PATTERN, "user" + index, "username"))
+			.email(checkConstraints(EMAIL_PATTERN, "user" + index + "@example.com", "email"))
+			.password(checkConstraints(PASSWORD_PATTERN, passwordEncoder.encode("user" + index), "password"))
+			.roles(Set.of(UserRole.USER))
+			.isVerified(true)
+			.build();
 
 		userRepository.saveAndFlush(u);
 	}
@@ -82,14 +82,15 @@ public class MockUserLoader {
 			String email = faker.internet().safeEmailAddress(emailLocal);
 			String passwordHash = passwordEncoder.encode(faker.internet().password(8, 32));
 
-			UserEntity u = new UserEntity();
-			u.setUuid(UUID.randomUUID());
-			u.setFirstName(firstName);
-			u.setLastName(lastName);
-			u.setUsername(checkConstraints(USERNAME_PATTERN, username, "username"));
-			u.setEmail(checkConstraints(EMAIL_PATTERN, email, "email"));
-			u.setPassword(checkConstraints(PASSWORD_PATTERN, passwordHash, "password"));
-			u.setIsVerified(faker.random().nextInt(100) < 75);
+			UserEntity u = UserEntity.builder()
+				.uuid(UUID.randomUUID())
+				.firstName(firstName)
+				.lastName(lastName)
+				.username(checkConstraints(USERNAME_PATTERN, username, "username"))
+				.email(checkConstraints(EMAIL_PATTERN, email, "email"))
+				.password(checkConstraints(PASSWORD_PATTERN, passwordHash, "password"))
+				.isVerified(faker.random().nextInt(100) < 75)
+				.build();
 
 			userRepository.saveAndFlush(u);
 			log.info("Created new mock user: {} <{}>", u.getUsername(), u.getEmail());
