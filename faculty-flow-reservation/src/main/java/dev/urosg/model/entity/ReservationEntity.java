@@ -3,6 +3,7 @@ package dev.urosg.model.entity;
 import dev.urosg.model.enumeration.EventType;
 import dev.urosg.model.enumeration.ReservationStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.AssertTrue;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -52,4 +53,10 @@ public class ReservationEntity {
 	String note;
 
 	String comment;
+
+	@AssertTrue(message = "End time must be after start time")
+	public boolean isTimeRangeValid() {
+		if (startTime == null || endTime == null) return true; // @NotNull
+		return startTime.isBefore(endTime);
+	}
 }

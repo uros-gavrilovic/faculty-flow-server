@@ -2,10 +2,13 @@ package dev.urosg.model.entity;
 
 import data.ReservationTestData;
 import dev.urosg.model.enumeration.ReservationStatus;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.*;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -66,6 +69,42 @@ public class ReservationEntityTest {
 	@Nested
 	class BeanValidation {
 
+		private Set<String> violatedFields(ReservationEntity entity) {
+			return validator.validate(entity).stream()
+				.map(ConstraintViolation::getPropertyPath)
+				.map(Object::toString)
+				.collect(Collectors.toSet());
+		}
+
+		@Test
+		void validReservationHasNoViolations() {
+			assertTrue(validator.validate(reservation).isEmpty());
+		}
+
+		@Test
+		void rejectsEndTimeBeforeStartTime() {
+			reservation.setEndTime(ReservationTestData.START_TIME.minusMinutes(1));
+			assertEquals(Set.of("timeRangeValid"), violatedFields(reservation));
+		}
+
+		@Test
+		void rejectsEqualStartAndEndTime() {
+			reservation.setEndTime(ReservationTestData.START_TIME);
+			assertEquals(Set.of("timeRangeValid"), violatedFields(reservation));
+		}
+
+		@Test
+		void acceptsOneMinuteReservation() {
+			reservation.setEndTime(ReservationTestData.START_TIME.plusMinutes(1));
+			assertTrue(violatedFields(reservation).isEmpty());
+		}
+
+		@Test
+		void missingTimesAreNotReportedAsInvalidRange() {
+			reservation.setStartTime(null);
+			reservation.setEndTime(null);
+			assertTrue(violatedFields(reservation).isEmpty());
+		}
 	}
 
 }
