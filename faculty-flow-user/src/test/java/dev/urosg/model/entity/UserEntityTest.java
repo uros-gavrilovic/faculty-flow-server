@@ -42,7 +42,7 @@ class UserEntityTest {
 
 	@BeforeEach
 	void setUp() {
-		user = UserTestData.VALID_USER();
+		user = UserTestData.USER_ENTITY();
 	}
 
 	private Set<String> getViolatedFields(UserEntity entity) {
@@ -72,14 +72,14 @@ class UserEntityTest {
 	class EqualityAndToString {
 		@Test
 		void testEquals() {
-			UserEntity other = UserTestData.VALID_USER();
+			UserEntity other = UserTestData.USER_ENTITY();
 			assertEquals(user, other);
 			assertEquals(user.hashCode(), other.hashCode());
 		}
 
 		@Test
 		void testNotEquals() {
-			UserEntity other = UserTestData.NEW_USER();
+			UserEntity other = UserTestData.NEW_USER_ENTITY();
 			assertNotEquals(user, other);
 		}
 

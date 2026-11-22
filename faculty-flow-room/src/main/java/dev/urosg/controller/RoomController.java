@@ -1,9 +1,11 @@
 package dev.urosg.controller;
 
+import dev.urosg.annotation.HasRole;
 import dev.urosg.model.dto.Room;
 import dev.urosg.model.dto.RoomFilter;
 import dev.urosg.model.dto.SearchRequest;
 import dev.urosg.model.dto.SearchResponse;
+import dev.urosg.model.enumeration.UserRole;
 import dev.urosg.service.RoomService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -36,17 +38,20 @@ public class RoomController {
 		return roomService.searchRooms(searchRequest);
 	}
 
+	@HasRole(UserRole.ADMINISTRATOR)
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Room createRoom(@RequestBody Room room) {
 		return roomService.createRoom(room);
 	}
 
+	@HasRole(UserRole.ADMINISTRATOR)
 	@PutMapping()
 	public Room updateRoom(@RequestBody Room room) {
 		return roomService.updateRoom(room);
 	}
 
+	@HasRole(UserRole.ADMINISTRATOR)
 	@DeleteMapping("/{uuid}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteRoom(@PathVariable UUID uuid) {
