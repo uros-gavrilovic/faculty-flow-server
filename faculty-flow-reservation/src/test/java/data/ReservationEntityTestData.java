@@ -6,7 +6,7 @@ import dev.urosg.model.enumeration.ReservationStatus;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class ReservationTestData {
+public class ReservationEntityTestData {
 
 	public static final UUID RESERVATION_UUID = UUID.fromString("22222222-2222-2222-2222-222222222222");
 	public static final LocalDateTime START_TIME = LocalDateTime.of(2026, 11, 20, 10, 0);
@@ -40,5 +40,4 @@ public class ReservationTestData {
 			.status(ReservationStatus.REJECTED)
 			.build();
 	}
-
 }

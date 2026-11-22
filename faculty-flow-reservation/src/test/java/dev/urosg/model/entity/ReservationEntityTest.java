@@ -1,6 +1,6 @@
 package dev.urosg.model.entity;
 
-import data.ReservationTestData;
+import data.ReservationEntityTestData;
 import dev.urosg.model.enumeration.ReservationStatus;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -32,7 +32,7 @@ public class ReservationEntityTest {
 
 	@BeforeEach
 	void setUp() {
-		reservation = ReservationTestData.ACCEPTED_RESERVATION();
+		reservation = ReservationEntityTestData.ACCEPTED_RESERVATION();
 	}
 
 	@Nested
@@ -49,14 +49,14 @@ public class ReservationEntityTest {
 	class EqualityAndToString {
 		@Test
 		void testEquals() {
-			ReservationEntity otherReservation = ReservationTestData.ACCEPTED_RESERVATION();
+			ReservationEntity otherReservation = ReservationEntityTestData.ACCEPTED_RESERVATION();
 			assertEquals(reservation, otherReservation);
 			assertEquals(reservation.hashCode(), otherReservation.hashCode());
 		}
 
 		@Test
 		void testNotEquals() {
-			ReservationEntity rejectedReservation = ReservationTestData.REJECTED_RESERVATION();
+			ReservationEntity rejectedReservation = ReservationEntityTestData.REJECTED_RESERVATION();
 			assertNotEquals(reservation, rejectedReservation);
 		}
 
@@ -83,19 +83,19 @@ public class ReservationEntityTest {
 
 		@Test
 		void rejectsEndTimeBeforeStartTime() {
-			reservation.setEndTime(ReservationTestData.START_TIME.minusMinutes(1));
+			reservation.setEndTime(ReservationEntityTestData.START_TIME.minusMinutes(1));
 			assertEquals(Set.of("timeRangeValid"), violatedFields(reservation));
 		}
 
 		@Test
 		void rejectsEqualStartAndEndTime() {
-			reservation.setEndTime(ReservationTestData.START_TIME);
+			reservation.setEndTime(ReservationEntityTestData.START_TIME);
 			assertEquals(Set.of("timeRangeValid"), violatedFields(reservation));
 		}
 
 		@Test
 		void acceptsOneMinuteReservation() {
-			reservation.setEndTime(ReservationTestData.START_TIME.plusMinutes(1));
+			reservation.setEndTime(ReservationEntityTestData.START_TIME.plusMinutes(1));
 			assertTrue(violatedFields(reservation).isEmpty());
 		}
 

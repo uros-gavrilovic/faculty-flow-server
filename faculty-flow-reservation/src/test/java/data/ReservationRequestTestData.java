@@ -17,7 +17,7 @@ public class ReservationRequestTestData {
 			.startTime(START_TIME)
 			.endTime(END_TIME)
 			.eventType(EventType.LECTURE)
-			.reservedBy("john.doe")
+			.reservedBy(UserTestData.USER().username())
 			.note("Bring a projector")
 			.build();
 	}
