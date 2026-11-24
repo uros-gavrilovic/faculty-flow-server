@@ -25,7 +25,7 @@ Back-end for **Faculty Flow**, an app for managing faculty room reservations.
 ### Development mode
 
 Select the JDK and start the project (`dev` is optional; it is the default profile).
-The front-end container must be started manually (see [faculty-flow-client]([https://sdkman.io/](https://github.com/uros-gavrilovic/faculty-flow-client)) project for more information).
+The front-end container must be started manually (see [faculty-flow-client](https://github.com/uros-gavrilovic/faculty-flow-client)) project for more information).
 
 ```bash
 sdk use java 25.0.2-tem # Or use any other 25 JDK
